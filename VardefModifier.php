@@ -14,6 +14,8 @@ class VardefModifier
 {
 
     /**
+     * The default field structues that all fields are built from
+     *
      * @var array
      */
     private static $_defaults = array (
@@ -48,6 +50,8 @@ class VardefModifier
     }
 
     /**
+     * Recursive helper method used by VardefModifier::remove
+     *
      * @param array $values
      * @param array $from
      */
@@ -151,42 +155,51 @@ class VardefModifier
     }
 
     /**
+     * Sets Defaults, Adds, Removes and Changes the vardef
+     *
+     * Uses pretty much the whole class based on a array
+     *
+     * Possible keys:
+     *
+     *   - defaults: VardefModifier::defaults
+     *   - add:      VardefModifier::add
+     *   - change:   VardefModifier::change
+     *   - remove:   VardefModifier::remove
+     *
      * @param array $def
      * @return \VardefModifier
      * @throws VardefModifier_Exception
      */
     public function def(array $def)
     {
-        // Since add, remove and change may depend on
-        // these default settings, we'll need to do this first
-        if (isset($def['defaults']))
+        static $keys = array ('defaults', 'add', 'change', 'remove');
+        // This methods needs to be executed to the correct order
+        foreach ($keys as $key)
         {
-            $this->defaults($def['defaults']);
-        }
-        foreach ($def as $key => $fields)
-        {
-            switch ($key)
+            if (isset($def[$key]))
             {
-                case 'add':
-                    $this->add($fields);
-                    break;
-                case 'remove':
-                    $this->remove($fields);
-                    break;
-                case 'change':
-                    $this->change($fields);
-                    break;
-                default:
-                    if ($key !== 'defaults')
-                    {
-                        throw new VardefModifier_Exception("Invalid key: $key");
-                    }
+                $this->$key($def[$key]);
+                unset($def[$key]);
             }
+        }
+        if (!empty($def))
+        {
+            throw new VardefModifier_Exception(
+                'Invalid key(s): ' . implode(', ', array_keys($def))
+            );
         }
         return $this;
     }
 
     /**
+     * Adds fields, indices and relationships to the vardef
+     *
+     * Possible keys:
+     *
+     *   - fields:        VardefModifier::addFields
+     *   - indices:       VardefModifier::addIndices
+     *   - relationships: VardefModifier::addRelationships
+     *
      * @param array $fields
      * @return VardefModifier
      */
@@ -194,6 +207,8 @@ class VardefModifier
     {
         foreach ($keys as $key => $fields)
         {
+            if (!is_array ($fields))
+                throw new VardefModifier_Exception("Invalid Array Formatting");
             switch ($key)
             {
                 case 'fields':
@@ -213,6 +228,8 @@ class VardefModifier
     }
 
     /**
+     * Adds many indices to the vardef from a array definition
+     *
      * @todo
      * @param array $indices
      * @return \VardefModifier
@@ -224,6 +241,8 @@ class VardefModifier
     }
 
     /**
+     * Adds a index to the vardef
+     *
      * @todo
      * @return \VardefModifier
      */
@@ -234,16 +253,21 @@ class VardefModifier
     }
 
     /**
+     * Adds relationships to the vardef from a array definition
+     *
      * @todo
+     * @param array $definition
      * @return \VardefModifier
      */
-    public function addRelationships()
+    public function addRelationships(array $definition)
     {
         throw new VardefModifier_Exception(__METHOD__ . ' Not Implemented');
         return $this;
     }
 
     /**
+     * Adds a relationship to the vardef
+     *
      * @todo
      * @return \VardefModifier
      */
@@ -254,6 +278,8 @@ class VardefModifier
     }
 
     /**
+     * Makes changes to the vardefs
+     *
      * @param array $change
      * @return \VardefModifier
      */
@@ -264,6 +290,8 @@ class VardefModifier
     }
 
     /**
+     * Removes fields / properties this the vardef
+     *
      * @param array $keys
      */
     public function remove(array $values)
@@ -273,6 +301,8 @@ class VardefModifier
     }
 
     /**
+     * Changes the default field properties
+     *
      * @param array $field_defaults
      * @throws VardefModifier_Exception
      */
@@ -286,13 +316,22 @@ class VardefModifier
     }
 
     /**
+     * Adds fields based on a array definition
+     *
+     * The keys in the array should be the field type
+     * and the value an array of fields and definitions
+     *
+     * See VardefModifier::addField for supported field types
+     *
      * @param array $fields
      * @return \VardefModifier
      */
-    public function addFields(array $fields)
+    public function addFields(array $types)
     {
-        foreach ($fields as $type => $fields)
+        foreach ($types as $type => $fields)
         {
+            if (!is_array ($fields))
+                throw new VardefModifier_Exception("Invalid Array Formatting");
             foreach ($fields as $name => $settings)
             {
                 if (is_int($name))
@@ -511,6 +550,8 @@ class VardefModifier
     }
 
     /**
+     * Adds a field of the type link
+     *
      * @todo
      * @param string $name
      * @param array $settings
