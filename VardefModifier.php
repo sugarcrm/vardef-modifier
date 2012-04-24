@@ -144,7 +144,9 @@ class VardefModifier
     public function yaml($file)
     {
         if (!file_exists($file))
+        {
             throw new VardefModifier_Exception("Can't find file: $file");
+        }
         return $this->def(Spyc::YAMLLoad($file));
     }
 
@@ -175,7 +177,10 @@ class VardefModifier
                     $this->change($fields);
                     break;
                 default:
-                    throw new VardefModifier_Exception("Invalid key: $key");
+                    if ($key !== 'defaults')
+                    {
+                        throw new VardefModifier_Exception("Invalid key: $key");
+                    }
             }
         }
         return $this;
@@ -208,13 +213,6 @@ class VardefModifier
     }
 
     /**
-     *
-     * array (
-     *     'name',
-     *     array ('first_name', 'last_name'),
-     *     array ('type' => 'unique', 'fields' => 'name')
-     * )
-     *
      * @todo
      * @param array $indices
      * @return \VardefModifier
@@ -232,13 +230,6 @@ class VardefModifier
     public function addIndex($fields, $settings)
     {
         throw new VardefModifier_Exception(__METHOD__ . ' Not Implemented');
-        $fields = (array) $fields;
-        $index = array_merge(array (
-            'name' => 'idx_' . implode($fields, '_'),
-            'type' => 'index',
-            'fields' => $fields,
-            ), $settings);
-        $this->vardef['indices'][$index['name']] = $index;
         return $this;
     }
 
@@ -268,9 +259,7 @@ class VardefModifier
      */
     public function change(array $changes)
     {
-        $this->vardef = array_merge_recursive(
-            $this->vardef, $changes
-        );
+        $this->vardef = array_merge_recursive($this->vardef, $changes);
         return $this;
     }
 
@@ -501,7 +490,7 @@ class VardefModifier
     /**
      * @param string $name
      * @param array
-     * @return Dri_VdefBuilder
+     * @return \VardefModifier
      */
     private function addCurrency($name, array $settings = array ())
     {
