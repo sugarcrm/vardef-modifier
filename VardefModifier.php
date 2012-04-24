@@ -552,7 +552,7 @@ class VardefModifier
     {
         return $this->addDefaultField(
             $name,
-            array ('options' => strtolower($this->module_name . '_' . $name) . '_dom'),
+            array ('options' => strtolower($this->module_name . '_' . $name) . '_list'),
             $default,
             $settings
         );

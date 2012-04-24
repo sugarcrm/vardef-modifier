@@ -618,7 +618,7 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
                     'importable' => 'true',
                     'massupdate' => false,
                     'type' => 'enum',
-                    'options' => 'field1_dom'
+                    'options' => '_mymodules_field1_list'
                 ),
             ),
             'indices' => array (),
@@ -654,7 +654,7 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
                     'importable' => 'true',
                     'massupdate' => false,
                     'type' => 'multienum',
-                    'options' => 'field1_dom',
+                    'options' => '_mymodules_field1_list',
                     'isMultiSelect' => true
                 ),
             ),
