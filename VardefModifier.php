@@ -255,7 +255,7 @@ class VardefModifier
 
     /**
      * @param array $change
-     * @return Dri_VdefBuilder
+     * @return \VardefModifier
      */
     public function change(array $changes)
     {
@@ -287,7 +287,7 @@ class VardefModifier
 
     /**
      * @param array $fields
-     * @return Dri_VdefBuilder
+     * @return \VardefModifier
      */
     public function addFields(array $fields)
     {
@@ -514,7 +514,7 @@ class VardefModifier
      * @todo
      * @param string $name
      * @param array $settings
-     * @return Dri_VdefBuilder
+     * @return \VardefModifier
      */
     private function addLink($name, array $settings = array ())
     {
@@ -525,7 +525,7 @@ class VardefModifier
     /**
      * @param string $name
      * @param array $settings
-     * @return Dri_VdefBuilder
+     * @return \VardefModifier
      */
     private function addEnum($name, array $settings = array ())
     {
@@ -535,7 +535,7 @@ class VardefModifier
     /**
      * @param string $name
      * @param array $settings
-     * @return Dri_VdefBuilder
+     * @return \VardefModifier
      */
     private function addMultienum($name, array $settings = array ())
     {
@@ -546,13 +546,13 @@ class VardefModifier
      * @param string $name
      * @param array $settings
      * @param array $default
-     * @return Dri_VdefBuilder
+     * @return \VardefModifier
      */
     private function addEnumLike($name, array $default, array $settings)
     {
         return $this->addDefaultField(
             $name,
-            array ('options' => strtolower($name) . '_dom'),
+            array ('options' => strtolower($this->module_name . '_' . $name) . '_dom'),
             $default,
             $settings
         );
@@ -560,7 +560,7 @@ class VardefModifier
 
     /**
      * @param string $name
-     * @return Dri_VdefBuilder
+     * @return \VardefModifier
      */
     private function addDefaultField($name)
     {
