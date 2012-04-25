@@ -203,7 +203,7 @@ class VardefModifier
     public function def(array $def)
     {
         static $keys = array ('defaults', 'add', 'change', 'remove');
-        // This methods needs to be executed to the correct order
+        // These methods needs to be executed to the correct order
         foreach ($keys as $key)
         {
             if (isset($def[$key]))
@@ -268,23 +268,12 @@ class VardefModifier
     {
         foreach ($indices as $fields => $settings)
         {
-            if (is_int($fields))
+            if (is_int($fields) &&
+                    (is_string($settings) ||
+                    (is_array ($settings) && isset($settings[0]))))
             {
-                if (is_string($settings)
-                    || (is_array ($settings) && isset($settings[0])))
-                {
-                    $fields = $settings;
-                    $settings = array ();
-                }
-            }
-            elseif (is_string($fields) && is_string($settings))
-            {
-                $settings = array ('type' => $settings);
-            }
-
-            if (!is_array($settings))
-            {
-                throw new VardefModifier_Exception("Invalid type of settings");
+                $fields = $settings;
+                $settings = array ();
             }
 
             $this->addIndex($fields, $settings);
@@ -298,8 +287,18 @@ class VardefModifier
      * @todo
      * @return \VardefModifier
      */
-    public function addIndex($fields, array $settings = array ())
+    public function addIndex($fields, $settings = array ())
     {
+        if (is_string($settings) && is_string($fields))
+        {
+            $settings = array ('type' => $settings);
+        }
+
+        if (!is_array($settings))
+        {
+            throw new VardefModifier_Exception("Invalid type of settings");
+        }
+
         $fields = (array) $fields;
         $name = 'idx_' . $this->getTableName() . '_' . implode('_', $fields);
         $default = array ('name' => $name, 'fields' => $fields);
@@ -819,6 +818,9 @@ class VardefModifier
         ), $definition);
     }
 
+    /**
+     * @return string
+     */
     private function getVName($name)
     {
         return 'LBL_' . strtoupper($name);
