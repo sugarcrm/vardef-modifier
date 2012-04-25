@@ -692,6 +692,9 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
 
     public function test_relate()
     {
+        global $beanList;
+        if (!isset($beanList['Accounts']))
+            $beanList['Accounts'] = 'Account';
         $real_dic = array (
             'favorites' => true,
             'fields' => array (
