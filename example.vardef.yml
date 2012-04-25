@@ -35,7 +35,7 @@ add:
         link:
             # Will create a link field called contact_link
             - Contacts
-    
+
     # Add relationship fields and definitions
     relationships:
         #################################################
@@ -47,7 +47,7 @@ add:
         # And a index to the account_id field
         # The relationship name of this relation will be <object name>_accounts
         - Accounts
-        
+
         #################################################
         # Adds a relationship to Accounts called store
         # Will add fields:
@@ -57,7 +57,7 @@ add:
         # And a index to the store_id field
         # The relationship name of this relation will be <object name>_store_accounts
         store: Accounts
-        
+
         #################################################
         # Adds a relationship to Contacts called person
         # Will add fields:
@@ -67,7 +67,7 @@ add:
         # And a index to the person_id field
         # The relationship name of this relation will be <object name>_person_contacts
         person: { module: Contacts, required: true }
-        
+
         #################################################
         # Adds a relationship to Tasks
         # Will add fields:
@@ -79,7 +79,7 @@ add:
         Tasks:
             required: true
             index: false
-        
+
         #################################################
         # Adds a relationship to ProductTypes
         # Will add fields:
