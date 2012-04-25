@@ -1,5 +1,5 @@
 ################################################
-# Vardef example addition                      #
+# Vardef example addition
 ################################################
 ---
 # Change the defualt properties that are used when adding new fields
@@ -32,10 +32,74 @@ add:
                 module: Accounts
                 rname: type
         link:
-    # Add relationship fields and definition
+            
+    # Add relationship fields and definitions
     relationships:
+        #################################################
+        # Adds a relationship to Accounts
+        # Will add fields:
+        #     account_id
+        #     account_name
+        #     account_link
+        # And a index to the account_id field
+        # The relationship name of this relation will be <object name>_accounts
+        Accounts
+        #################################################
+        # Adds a relationship to Accounts called store
+        # Will add fields:
+        #     store_id
+        #     store_name
+        #     store_link
+        # And a index to the store_id field
+        # The relationship name of this relation will be <object name>_store_accounts
+        store: Accounts
+        #################################################
+        # Adds a relationship to Contacts called person
+        # Will add fields:
+        #     person_id
+        #     person_name: this field will be required
+        #     person_link
+        # And a index to the person_id field
+        # The relationship name of this relation will be <object name>_person_contacts
+        person: { module: Contacts, required: true }
+        #################################################
+        # Adds a relationship to Tasks
+        # Will add fields:
+        #     task_id
+        #     task_name: this field will be required
+        #     task_link
+        # In this case a index will NOT be added to task_id
+        # The relationship name of this relation will be <object name>_tasks
+        Tasks:
+            required: true
+            index: false
+        #################################################
+        # Adds a relationship to ProductTypes
+        # Will add fields:
+        #     producttype_id: the properties in the "id" array below will be merged to this field definition
+        #     producttype_name: the properties in the "name" array below will be merged to this field definition
+        #     producttype_link
+        # And a index to the person_id field
+        # The relationship name of this relation will be <object name>_producttypes
+        ProductTypes:
+            id:
+                function:
+                    name: getProductTypeDropdDown
+                    returns: html
+            name:
+                function:
+                    name: getProductTypeNameDropDown
+                    returns: html
     # Add indices
     indices:
+        # A index to the name field
+        name
+        # A unique index to the field my_key
+        my_key: { type: unique }
+        # A index containg field1, field2, field3
+        [ field1, field2, field3 ]
+        # A index field field1 and field2 called idx_my_index
+        { fields: [ field1, field2 ], name: idx_my_index }
 # Make changes in the vardef
 change:
     fields:

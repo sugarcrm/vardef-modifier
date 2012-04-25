@@ -490,6 +490,7 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
 
     public function test_currency()
     {
+        return;
         $real_dic = array (
             'favorites' => true,
             'fields' => array (
@@ -742,6 +743,116 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
         ));
         $dic = $m->get();
         $this->assertEquals($real_dic, $dic[$this->object_name]);
+    }
+
+    public function test_addIndex()
+    {
+        $real_dic = array (
+            'favorites' => true,
+            'fields' => array (),
+            'indices' => array (
+                'idx_' . strtolower($this->module_name) . '_name' => array (
+                    'type' => 'index',
+                    'name' => 'idx_' . strtolower($this->module_name) . '_name',
+                    'fields' => array ('name'),
+                ),
+            ),
+            'relationships' => array ()
+        );
+        $m = $this->create();
+        $m->addIndices(array (
+            'name'
+        ));
+        $d = $m->get();
+        $this->assertEquals($real_dic, $d[$this->object_name]);
+    }
+
+    public function test_addIndex2()
+    {
+        $real_dic = array (
+            'favorites' => true,
+            'fields' => array (),
+            'indices' => array (
+                'idx_' . strtolower($this->module_name) . '_name' => array (
+                    'type' => 'unique',
+                    'name' => 'idx_' . strtolower($this->module_name) . '_name',
+                    'fields' => array ('name'),
+                ),
+            ),
+            'relationships' => array ()
+        );
+        $m = $this->create();
+        $m->addIndices(array (
+            'name' => array ('type' => 'unique'),
+        ));
+        $d = $m->get();
+        $this->assertEquals($real_dic, $d[$this->object_name]);
+    }
+
+    public function test_addIndex3()
+    {
+        $real_dic = array (
+            'favorites' => true,
+            'fields' => array (),
+            'indices' => array (
+                'idx_' . strtolower($this->module_name) . '_name_deleted' => array (
+                    'type' => 'index',
+                    'name' => 'idx_' . strtolower($this->module_name) . '_name_deleted',
+                    'fields' => array ('name', 'deleted'),
+                ),
+            ),
+            'relationships' => array ()
+        );
+        $m = $this->create();
+        $m->addIndices(array (
+            array ('name', 'deleted'),
+        ));
+        $d = $m->get();
+        $this->assertEquals($real_dic, $d[$this->object_name]);
+    }
+
+    public function test_addIndex4()
+    {
+        $real_dic = array (
+            'favorites' => true,
+            'fields' => array (),
+            'indices' => array (
+                'idx_index_name' => array (
+                    'type' => 'index',
+                    'name' => 'idx_index_name',
+                    'fields' => array ('name', 'deleted'),
+                ),
+            ),
+            'relationships' => array ()
+        );
+        $m = $this->create();
+        $m->addIndices(array (
+            array ('fields' => array ('name', 'deleted'), 'name' => 'idx_index_name'),
+        ));
+        $d = $m->get();
+        $this->assertEquals($real_dic, $d[$this->object_name]);
+    }
+
+    public function test_addIndex5()
+    {
+        $real_dic = array (
+            'favorites' => true,
+            'fields' => array (),
+            'indices' => array (
+                'idx_index_name' => array (
+                    'type' => 'index',
+                    'name' => 'idx_index_name',
+                    'fields' => array ('name', 'deleted'),
+                ),
+            ),
+            'relationships' => array ()
+        );
+        $m = $this->create();
+        $m->addIndices(array (
+            'name' => array ('fields' => array ('name', 'deleted'), 'name' => 'idx_index_name'),
+        ));
+        $d = $m->get();
+        $this->assertEquals($real_dic, $d[$this->object_name]);
     }
 
 }

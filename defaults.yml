@@ -22,6 +22,9 @@ currency: { type: currency, len: "26,6", dbType: decimal }
 enum: { type: enum }
 multienum: { type: multienum, isMultiSelect: true }
 relate: { source: non-db, type: relate }
-
+link: { source: non-db, type: link }
+relationship: { id: {}, name: {}, link: {}, relationship: { relationship_type: one-to-many, lhs_key: id }, index: {} }
+name: { rname: name }
+index: { type: index }
 # This is the base in which all the normal fields are generated from
 _base: { required: false, reportable: true, audited: true, importable: 'true', massupdate: false }
