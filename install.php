@@ -51,8 +51,7 @@ foreach (array_slice($argv, 1) as $module)
 <?php
 
 /*********************************************
- * Vardef addition for module: $module       *
- * Created: $date                            *
+ * Module: $module
  ********************************************/
 require_once '$modifier_dir/VardefModifier.php';
 \$dictionary = VardefModifier::modify("$module", \$dictionary)->
@@ -63,10 +62,9 @@ require_once '$modifier_dir/VardefModifier.php';
 PHP;
     $yml_file = <<<YAML
 ################################################
-# Vardef addition for module: $module          #
-# Created: $date                               #
+# Module: $module
 ################################################
-
+---
 
 YAML;
 
