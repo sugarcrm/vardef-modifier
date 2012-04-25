@@ -14,6 +14,11 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         global $beanList, $dictionary;
+        global $beanList;
+        if (!isset($beanList['Accounts']))
+            $beanList['Accounts'] = 'Account';
+        if (!isset($beanList['Currencies']))
+            $beanList['Currencies'] = 'Currency';
         $this->module_name = "_MyModules";
         $this->object_name = "_MyModule";
         $beanList[$this->module_name] = $this->object_name;
@@ -490,13 +495,12 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
 
     public function test_currency()
     {
-        return;
         $real_dic = array (
             'favorites' => true,
             'fields' => array (
                 'currency_id' => array (
                     'name' => 'currency_id',
-                    'vname' => 'LBL_CURRENCY_ID',
+                    'vname' => 'LBL_CURRENCY',
                     'required' => false,
                     'reportable' => true,
                     'audited' => true,
@@ -511,7 +515,7 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
                 ),
                 'currency_name' => array (
                     'name' => 'currency_name',
-                    'vname' => 'LBL_CURRENCY_NAME',
+                    'vname' => 'LBL_CURRENCY',
                     'required' => false,
                     'reportable' => true,
                     'audited' => true,
@@ -547,6 +551,15 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
                     'source' => 'non-db',
                     'type' => 'relate',
                 ),
+                'currency_link' => array (
+                    'name' => 'currency_link',
+                    'vname' => 'LBL_CURRENCY',
+                    'source' => 'non-db',
+                    'type' => 'link',
+                    'bean_name' => 'Currency',
+                    'module' => 'Currencies',
+                    'relationship' => '_mymodule_currencies'
+                ),
                 'field1' => array (
                     'name' => 'field1',
                     'vname' => 'LBL_FIELD1',
@@ -573,8 +586,24 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
                     'group' => 'field1',
                 ),
             ),
-            'indices' => array (),
-            'relationships' => array (),
+            'indices' => array (
+                'idx__mymodules_currency_id' => array (
+                    'type' => 'index',
+                    'name' => 'idx__mymodules_currency_id',
+                    'fields' => array ('currency_id')
+                )
+            ),
+            'relationships' => array (
+                '_mymodule_currencies' => array (
+                    'relationship_type' => 'one-to-many',
+                    'lhs_key' => 'id',
+                    'lhs_module' => 'Currencies',
+                    'lhs_table' => 'currencies',
+                    'rhs_module' => '_MyModules',
+                    'rhs_table' => '_mymodules',
+                    'rhs_key' => 'currency_id',
+                )
+            ),
         );
         $m = $this->create();
         $m->addField('field1', 'currency');
@@ -692,9 +721,6 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
 
     public function test_relate()
     {
-        global $beanList;
-        if (!isset($beanList['Accounts']))
-            $beanList['Accounts'] = 'Account';
         $real_dic = array (
             'favorites' => true,
             'fields' => array (
