@@ -909,7 +909,7 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
     public function test_change()
     {
         $m = $this->create();
-        $m->addField('test_change', 'int', array ( 'len' => '2' ));
+        $m->addField('test_change', 'int', array ('len' => '2'));
         $dic = $m->get();
         $this->assertEquals('2', $dic[$this->object_name]['fields']['test_change']['len']);
         $m->change(array (
@@ -972,7 +972,6 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
         $this->assertTrue(!isset($dic[$this->object_name]['fields']['test_remove']));
     }
 
-
     public function test_remove4()
     {
         $m = $this->create();
@@ -989,4 +988,5 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
         $dic = $m->get();
         $this->assertTrue(!isset($dic[$this->object_name]['fields']['test_remove']['len']));
     }
+
 }
