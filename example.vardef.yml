@@ -1,0 +1,52 @@
+################################################
+# Vardef example addition                      #
+################################################
+---
+# Change the defualt properties that are used when adding new fields
+# to see the default default properties, look in ./defaults.template.yml file
+defaults:
+    fields:
+        # Make all url fields added in this file required (If nothing else is specified)
+        url:
+            required: true
+        # Make all varchar fields to be
+        varchar:
+            len: 3
+# Adds fields, relationships and indices
+add:
+    fields:
+        # Add varchar fields..
+        varchar:
+            # Without any options
+            my_field
+            # Add a field with properties
+            my_other_field:
+                len: 3
+        # Add integer fields, to see all suported field types see VardefModifier::addField
+        int:
+            # see https://github.com/tekimaki/spyc for complete syntax reference.
+            my_int_field: { int: 2 }
+        relate:
+            account_type:
+                # the module property is always required in this field type
+                module: Accounts
+                rname: type
+        link:
+    # Add relationship fields and definition
+    relationships:
+    # Add indices
+    indices:
+# Make changes in the vardef
+change:
+    fields:
+        type:
+            # Change the len property of the type field to 4
+            len: 4
+# Removes fields and properties of fields, relationships and indices
+remove:
+    fields:
+        # Remove the name field completely
+        name
+        some_fields:
+            # Remove the required property of the "some_field" field.
+            required
