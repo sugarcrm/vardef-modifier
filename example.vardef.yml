@@ -12,6 +12,7 @@ defaults:
         # Make all varchar fields to be
         varchar:
             len: 3
+
 # Adds fields, relationships and indices
 add:
     fields:
@@ -32,7 +33,9 @@ add:
                 module: Accounts
                 rname: type
         link:
-            
+            # Will create a link field called contact_link
+            Contacts
+    
     # Add relationship fields and definitions
     relationships:
         #################################################
@@ -44,6 +47,7 @@ add:
         # And a index to the account_id field
         # The relationship name of this relation will be <object name>_accounts
         Accounts
+        
         #################################################
         # Adds a relationship to Accounts called store
         # Will add fields:
@@ -53,6 +57,7 @@ add:
         # And a index to the store_id field
         # The relationship name of this relation will be <object name>_store_accounts
         store: Accounts
+        
         #################################################
         # Adds a relationship to Contacts called person
         # Will add fields:
@@ -62,6 +67,7 @@ add:
         # And a index to the person_id field
         # The relationship name of this relation will be <object name>_person_contacts
         person: { module: Contacts, required: true }
+        
         #################################################
         # Adds a relationship to Tasks
         # Will add fields:
@@ -73,6 +79,7 @@ add:
         Tasks:
             required: true
             index: false
+        
         #################################################
         # Adds a relationship to ProductTypes
         # Will add fields:
@@ -90,22 +97,27 @@ add:
                 function:
                     name: getProductTypeNameDropDown
                     returns: html
+
     # Add indices
     indices:
-        # A index to the name field
+        # A index to the name field:
         name
-        # A unique index to the field my_key
+        # A unique index to the field my_key:
         my_key: { type: unique }
-        # A index containg field1, field2, field3
+        # Short hand for above syntax:
+        my_key: unique
+        # A index containg field1, field2, field3:
         [ field1, field2, field3 ]
-        # A index field field1 and field2 called idx_my_index
+        # A index field field1 and field2 called idx_my_index:
         { fields: [ field1, field2 ], name: idx_my_index }
+
 # Make changes in the vardef
 change:
     fields:
         type:
             # Change the len property of the type field to 4
             len: 4
+
 # Removes fields and properties of fields, relationships and indices
 remove:
     fields:

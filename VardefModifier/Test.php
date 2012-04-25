@@ -855,4 +855,26 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
         $this->assertEquals($real_dic, $d[$this->object_name]);
     }
 
+    public function test_addIndex6()
+    {
+        $real_dic = array (
+            'favorites' => true,
+            'fields' => array (),
+            'indices' => array (
+                'idx_' . strtolower($this->module_name) . '_name' => array (
+                    'type' => 'unique',
+                    'name' => 'idx_' . strtolower($this->module_name) . '_name',
+                    'fields' => array ('name'),
+                ),
+            ),
+            'relationships' => array ()
+        );
+        $m = $this->create();
+        $m->addIndices(array (
+            'name' => 'unique'
+        ));
+        $d = $m->get();
+        $this->assertEquals($real_dic, $d[$this->object_name]);
+    }
+
 }

@@ -277,6 +277,10 @@ class VardefModifier
                     $settings = array ();
                 }
             }
+            elseif (is_string($fields) && is_string($settings))
+            {
+                $settings = array ('type' => $settings);
+            }
 
             if (!is_array($settings))
             {
