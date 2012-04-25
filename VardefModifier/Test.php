@@ -880,4 +880,87 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
         $this->assertEquals($real_dic, $d[$this->object_name]);
     }
 
+    public function test_change()
+    {
+        $m = $this->create();
+        $m->addField('test_change', 'int', array ( 'len' => '2' ));
+        $dic = $m->get();
+        $this->assertEquals('2', $dic[$this->object_name]['fields']['test_change']['len']);
+        $m->change(array (
+            'fields' => array (
+                'test_change' => array (
+                    'len' => '3'
+                )
+            )
+        ));
+        $dic = $m->get();
+        $this->assertEquals('3', $dic[$this->object_name]['fields']['test_change']['len']);
+    }
+
+    public function test_remove()
+    {
+        $m = $this->create();
+        $m->addField('test_remove', 'int');
+        $dic = $m->get();
+        $this->assertTrue(isset($dic[$this->object_name]['fields']['test_remove']));
+        $this->assertTrue(isset($dic[$this->object_name]['fields']['test_remove']['len']));
+        $m->remove(array (
+            'fields' => array (
+                'test_remove' => array (
+                    'len'
+                )
+            )
+        ));
+        $dic = $m->get();
+        $this->assertTrue(!isset($dic[$this->object_name]['fields']['test_remove']['len']));
+    }
+
+    public function test_remove2()
+    {
+        $m = $this->create();
+        $m->addField('test_remove', 'int');
+        $dic = $m->get();
+        $this->assertTrue(isset($dic[$this->object_name]['fields']['test_remove']));
+        $this->assertTrue(isset($dic[$this->object_name]['fields']['test_remove']['len']));
+        $m->remove(array (
+            'fields' => array (
+                'test_remove'
+            )
+        ));
+        $dic = $m->get();
+        $this->assertTrue(!isset($dic[$this->object_name]['fields']['test_remove']));
+    }
+
+    public function test_remove3()
+    {
+        $m = $this->create();
+        $dic = $m->get();
+        $this->assertTrue(!isset($dic[$this->object_name]['fields']['test_remove']));
+        $this->assertTrue(!isset($dic[$this->object_name]['fields']['test_remove']['len']));
+        $m->remove(array (
+            'fields' => array (
+                'test_remove'
+            )
+        ));
+        $dic = $m->get();
+        $this->assertTrue(!isset($dic[$this->object_name]['fields']['test_remove']));
+    }
+
+
+    public function test_remove4()
+    {
+        $m = $this->create();
+        $dic = $m->get();
+        $this->assertTrue(!isset($dic[$this->object_name]['fields']['test_remove']));
+        $this->assertTrue(!isset($dic[$this->object_name]['fields']['test_remove']['len']));
+        $m->remove(array (
+            'fields' => array (
+                'test_remove' => array (
+                    'len'
+                )
+            )
+        ));
+        $dic = $m->get();
+        $this->assertTrue(!isset($dic[$this->object_name]['fields']['test_remove']['len']));
+    }
 }

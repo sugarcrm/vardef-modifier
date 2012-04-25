@@ -427,7 +427,7 @@ class VardefModifier
      */
     public function change(array $changes)
     {
-        $this->vardef = array_merge_recursive($this->vardef, $changes);
+        $this->vardef = self::merge($this->vardef, $changes);
         return $this;
     }
 
