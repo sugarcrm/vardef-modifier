@@ -1,10 +1,10 @@
 ################################################
 # Vardef example
-#
 ################################################
 ---
+#################################################
 # Change the defualt properties that are used when adding new fields
-# to see the default default properties, look in ./defaults.template.yml file
+# to see the default default properties, look in ./defaults.yml file
 defaults:
     # Make all url fields added in this file required (If nothing else is specified)
     url:
@@ -12,9 +12,17 @@ defaults:
     # Make all varchar fields to be
     varchar:
         len: 3
+#################################################
 
+#################################################
 # Adds fields, relationships and indices
 add:
+    #################################################
+    # Adds fields to the vardef
+    # 
+    # The format of all labels will be:
+    #   LBL_<field name to upper case>
+    #
     fields:
         # Add varchar fields..
         varchar:
@@ -23,70 +31,108 @@ add:
             # Add a field with properties
             my_other_field:
                 len: 3
+
         # Add integer fields, to see all suported field types see VardefModifier::addField
         int:
             # see https://github.com/tekimaki/spyc for complete syntax reference.
             my_int_field: { int: 2 }
+
         relate:
             account_type:
                 # the module property is always required in this field type
                 module: Accounts
                 rname: type
-        link:
-            # Will create a link field called contact_link
-            - Contacts
 
+        enum:
+            # The options name of this field will be:
+            # <module name to lower case>_type_list
+            - type
+            kind:
+                required: true
+                options: global_kinds_list
+                
+        multienum:
+            # The options name of this field will be:
+            # <module name to lower case>_codes_list
+            - codes
+
+        link:
+            # Will create a link field called contacts
+            - Contacts
+    #################################################
+    
+    #################################################
     # Add relationship fields and definitions
     relationships:
         #################################################
         # Adds a relationship to Accounts
+        #
         # Will add fields:
         #     account_id
         #     account_name
         #     account_link
+        #
         # And a index to the account_id field
+        #
         # The relationship name of this relation will be <object name>_accounts
         - Accounts
+        #################################################
 
         #################################################
         # Adds a relationship to Accounts called store
+        #
         # Will add fields:
         #     store_id
         #     store_name
         #     store_link
+        #
         # And a index to the store_id field
-        # The relationship name of this relation will be <object name>_store_accounts
+        #
+        # The relationship name of this relation will be:
+        #    <object name>_store_accounts
         store: Accounts
+        #################################################
 
         #################################################
         # Adds a relationship to Contacts called person
+        #
         # Will add fields:
         #     person_id
         #     person_name: this field will be required
         #     person_link
+        #
         # And a index to the person_id field
+        #
         # The relationship name of this relation will be <object name>_person_contacts
         person: { module: Contacts, required: true }
+        #################################################
 
         #################################################
         # Adds a relationship to Tasks
+        #
         # Will add fields:
         #     task_id
         #     task_name: this field will be required
         #     task_link
+        #
         # In this case a index will NOT be added to task_id
+        #
         # The relationship name of this relation will be <object name>_tasks
         Tasks:
             required: true
             index: false
+        #################################################
 
         #################################################
         # Adds a relationship to ProductTypes
+        #
         # Will add fields:
         #     producttype_id: the properties in the "id" array below will be merged to this field definition
         #     producttype_name: the properties in the "name" array below will be merged to this field definition
         #     producttype_link
+        #
         # And a index to the person_id field
+        #
         # The relationship name of this relation will be <object name>_producttypes
         ProductTypes:
             id:
@@ -97,27 +143,46 @@ add:
                 function:
                     name: getProductTypeNameDropDown
                     returns: html
+        #################################################
 
+    #################################################
     # Add indices
     indices:
+        #################################################
         # A index to the name field:
         - name
+        #################################################
+
+        #################################################
         # A unique index to the field my_key:
         my_key: { type: unique }
+        #################################################
+
+        #################################################
         # Short hand for above syntax:
         my_key: unique
+        #################################################
         # A index containg field1, field2, field3:
         - [ field1, field2, field3 ]
+        #################################################
+
+        #################################################
         # A index field field1 and field2 called idx_my_index:
         - { fields: [ field1, field2 ], name: idx_my_index }
+        #################################################
 
+    #################################################
+
+#################################################
 # Make changes in the vardef
 change:
     fields:
         type:
             # Change the len property of the type field to 4
             len: 4
+#################################################
 
+#################################################
 # Removes fields and properties of fields, relationships and indices
 remove:
     fields:
@@ -126,3 +191,4 @@ remove:
         some_field:
             # Remove the required property of the "some_field" field.
             - required
+#################################################
