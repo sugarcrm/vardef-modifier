@@ -14,30 +14,11 @@ class VardefModifier
 {
 
     /**
-     * The default field structues that all fields are built from
-     *
+     * Holds the default field definitions that all fields are built from
+     * This is loaded from the ./defaults.yml file by VardefModifier::loadDefaults
      * @var array
      */
-    private static $_defaults = array (
-        'varchar' => array ('type' => 'varchar', 'len' => '255'),
-        'int' => array ('type' => 'int', 'len' => '8'),
-        'text' => array ('type' => 'text'),
-        'date' => array ('type' => 'date'),
-        'decimal' => array ('type' => 'decimal', 'len' => '26,6'),
-        'image' => array ('type' => 'image', 'dbType' => "varchar", 'height' => '100'),
-        'datetimecombo' => array ('type' => 'datetimecombo', 'dbType' => 'datetime'),
-        'url' => array ('type' => 'url', 'dbType' => 'varchar'),
-        'datetime' => array ('type' => 'datetime'),
-        'bool' => array ('type' => 'bool'),
-        'float' => array ('type' => 'float'),
-        'phone' => array ('type' => 'phone', 'dbType' => 'varchar', 'len' => 100),
-        'id' => array ('type' => 'id'),
-        'currency' => array ('type' => 'currency', 'len' => '26,6', 'dbType' => 'decimal'),
-        'enum' => array ('type' => 'enum'),
-        'multienum' => array ('type' => 'multienum', 'isMultiSelect' => true),
-        'relate' => array ('source' => 'non-db', 'type' => 'relate'),
-        '_base' => array ('required' => false, 'reportable' => true, 'audited' => true, 'importable' => 'true', 'massupdate' => false),
-    );
+    private static $_defaults;
 
     /**
      * @param string $module_name
@@ -47,6 +28,19 @@ class VardefModifier
     public static function modify($module_name, array $dictionary)
     {
         return new VardefModifier($module_name, $dictionary);
+    }
+
+    /**
+     * @return array
+     * @throws VardefModifier_Exception
+     */
+    private static function loadDefaults()
+    {
+        if (!isset(self::$_defaults))
+        {
+            $file = __DIR__ . '/defaults.yml';
+            self::$_defaults = spyc_load_file($file);
+        }
     }
 
     /**
@@ -127,6 +121,7 @@ class VardefModifier
      */
     public function __construct($module_name, array $dictionary)
     {
+        self::loadDefaults();
         $this->module_name = $module_name;
         $this->object_name = self::getObjectName($this->module_name);
         $this->dictionary = $dictionary;
@@ -161,10 +156,10 @@ class VardefModifier
      *
      * Possible keys:
      *
-     *   - defaults: VardefModifier::defaults
-     *   - add:      VardefModifier::add
-     *   - change:   VardefModifier::change
-     *   - remove:   VardefModifier::remove
+     *   - defaults: see VardefModifier::defaults
+     *   - add:      see VardefModifier::add
+     *   - change:   see VardefModifier::change
+     *   - remove:   see VardefModifier::remove
      *
      * @param array $def
      * @return \VardefModifier
@@ -196,9 +191,9 @@ class VardefModifier
      *
      * Possible keys:
      *
-     *   - fields:        VardefModifier::addFields
-     *   - indices:       VardefModifier::addIndices
-     *   - relationships: VardefModifier::addRelationships
+     *   - fields:        see VardefModifier::addFields
+     *   - indices:       see VardefModifier::addIndices
+     *   - relationships: see VardefModifier::addRelationships
      *
      * @param array $fields
      * @return VardefModifier
@@ -376,6 +371,10 @@ class VardefModifier
      */
     public function addField($name, $type, array $settings = array ())
     {
+        if (!is_string($name) || empty($name))
+        {
+            throw new VardefModifier_Exception("Invalid type of name");
+        }
         switch ($type)
         {
             case 'enum':
