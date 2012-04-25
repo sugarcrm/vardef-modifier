@@ -1,17 +1,17 @@
 ################################################
-# Vardef example addition
+# Vardef example
+#
 ################################################
 ---
 # Change the defualt properties that are used when adding new fields
 # to see the default default properties, look in ./defaults.template.yml file
 defaults:
-    fields:
-        # Make all url fields added in this file required (If nothing else is specified)
-        url:
-            required: true
-        # Make all varchar fields to be
-        varchar:
-            len: 3
+    # Make all url fields added in this file required (If nothing else is specified)
+    url:
+        required: true
+    # Make all varchar fields to be
+    varchar:
+        len: 3
 
 # Adds fields, relationships and indices
 add:
