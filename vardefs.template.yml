@@ -1,0 +1,39 @@
+################################################
+# Module: $module
+################################################
+---
+#defaults: # See VardefModifier/defaults.yml
+
+#add:
+#    fields:
+#        varchar:
+#        int:
+#        relate:
+#        link:
+#        enum:
+#        multienum:
+#        link:
+#        currency:
+#        text:
+#        date:
+#        decimal:
+#        image:
+#        datetimecombo:
+#        url:
+#        datetime:
+#        bool:
+#        float:
+#        phone:
+#        id:
+#    relationships:
+#    indices:
+
+#remove:
+#    fields:
+#    relationships:
+#    indices:
+
+#changes:
+#    fields:
+#    relationships:
+#    indices:
