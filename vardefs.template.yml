@@ -25,6 +25,7 @@
 #        float:
 #        phone:
 #        id:
+#        readonly:
 #    relationships:
 #    indices:
 

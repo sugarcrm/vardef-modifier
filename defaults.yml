@@ -5,6 +5,16 @@
 # Author Emil Kilhage
 ##############################################################
 ---
+##############################################################
+# This is the base in which all the normal fields are generated from
+_base:
+    required: false
+    reportable: true
+    audited: true
+    importable: 'true'
+    massupdate: false
+##############################################################
+# Field bases:
 varchar: { type: varchar, len: 255 }
 int: { type: int, len: 8 }
 text: { type: text }
@@ -22,10 +32,20 @@ currency: { type: currency, len: "26,6", dbType: decimal }
 enum: { type: enum }
 multienum: { type: multienum, isMultiSelect: true }
 relate: { source: non-db, type: relate }
-link: { source: non-db, type: link }
-relationship: { id: {}, name: {}, link: {}, relationship: { relationship_type: one-to-many, lhs_key: id }, index: {} }
-name: { rname: name }
-index: { type: index }
 readonly: { type: readonly }
-# This is the base in which all the normal fields are generated from
-_base: { required: false, reportable: true, audited: true, importable: 'true', massupdate: false }
+name: { rname: name }
+link: { source: non-db, type: link }
+##############################################################
+# The Relationship base
+relationship: 
+    id: {}
+    name: {}
+    link: {}
+    index: {}
+    relationship: 
+        relationship_type: one-to-many
+        lhs_key: id
+##############################################################
+# The Index base
+index: { type: index }
+##############################################################
