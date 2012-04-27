@@ -14,11 +14,13 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         global $beanList, $dictionary;
-        global $beanList;
+
         if (!isset($beanList['Accounts']))
             $beanList['Accounts'] = 'Account';
+
         if (!isset($beanList['Currencies']))
             $beanList['Currencies'] = 'Currency';
+
         $this->module_name = "_MyModules";
         $this->object_name = "_MyModule";
         $beanList[$this->module_name] = $this->object_name;
