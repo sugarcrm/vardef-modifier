@@ -19,7 +19,7 @@ defaults:
 add:
     #################################################
     # Adds fields to the vardef
-    # 
+    #
     # The format of all labels will be:
     #   LBL_<field name to upper case>
     #
@@ -34,7 +34,7 @@ add:
 
         # Add integer fields, to see all suported field types see VardefModifier::addField
         int:
-            # see https://github.com/tekimaki/spyc for complete syntax reference.
+            # see https://github.com/tekimaki/spyc for complete yaml syntax reference.
             my_int_field: { int: 2 }
 
         relate:
@@ -50,7 +50,7 @@ add:
             kind:
                 required: true
                 options: global_kinds_list
-                
+
         multienum:
             # The options name of this field will be:
             # <module name to lower case>_codes_list
@@ -60,7 +60,7 @@ add:
             # Will create a link field called contacts
             - Contacts
     #################################################
-    
+
     #################################################
     # Add relationship fields and definitions
     relationships:
@@ -161,6 +161,8 @@ add:
         #################################################
         # Short hand for above syntax:
         my_key: unique
+        #################################################
+
         #################################################
         # A index containg field1, field2, field3:
         - [ field1, field2, field3 ]
