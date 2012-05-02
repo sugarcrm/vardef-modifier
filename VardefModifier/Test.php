@@ -21,6 +21,12 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
         if (!isset($beanList['Currencies']))
             $beanList['Currencies'] = 'Currency';
 
+        if (!isset($beanList['Contacts']))
+            $beanList['Contacts'] = 'Contact';
+
+        if (!isset($beanList['Cases']))
+            $beanList['Cases'] = 'aCase';
+
         $this->module_name = "_MyModules";
         $this->object_name = "_MyModule";
         $beanList[$this->module_name] = $this->object_name;
@@ -571,7 +577,7 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
                     'importable' => 'true',
                     'massupdate' => false,
                     'type' => 'currency',
-                    'len' => '26,6',
+                    'len' => '26,2',
                     'dbType' => 'decimal',
                 ),
                 'field1_usdollar' => array (
@@ -583,7 +589,7 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
                     'importable' => 'true',
                     'massupdate' => false,
                     'type' => 'currency',
-                    'len' => '26,6',
+                    'len' => '26,2',
                     'dbType' => 'decimal',
                     'group' => 'field1',
                 ),
@@ -771,6 +777,84 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
                     )
                 )
             )
+        ));
+        $dic = $m->get();
+        $this->assertEquals($real_dic, $dic[$this->object_name]);
+    }
+
+    public function test_addLinkSimple()
+    {
+        $real_dic = array (
+            'favorites' => true,
+            'fields' => array (
+                'accounts' => array (
+                    'name' => 'accounts',
+                    'vname' => 'LBL_ACCOUNTS',
+                    'source' => 'non-db',
+                    'type' => 'link',
+                    'bean_name' => 'Account',
+                    'module' => 'Accounts',
+                    'relationship' => 'account__mymodules'
+                ),
+            ),
+            'indices' => array (),
+            'relationships' => array (),
+        );
+        $m = $this->create();
+        $m->addField("Accounts", 'link');
+        $dic = $m->get();
+        $this->assertEquals($real_dic, $dic[$this->object_name]);
+    }
+
+    public function test_addLinkNamed()
+    {
+        $real_dic = array (
+            'favorites' => true,
+            'fields' => array (
+                'cases' => array (
+                    'name' => 'cases',
+                    'vname' => 'LBL_CASES',
+                    'source' => 'non-db',
+                    'type' => 'link',
+                    'bean_name' => 'aCase',
+                    'module' => 'Cases',
+                    'relationship' => 'acase_case__mymodules'
+                ),
+            ),
+            'indices' => array (),
+            'relationships' => array (),
+        );
+        $m = $this->create();
+        $m->addField("cases", 'link', array (
+            'module' => 'Cases',
+            'relationship_name' => 'case'
+        ));
+        $dic = $m->get();
+        $this->assertEquals($real_dic, $dic[$this->object_name]);
+    }
+
+    public function test_addLinkNamed2()
+    {
+        $real_dic = array (
+            'favorites' => true,
+            'fields' => array (
+                'contact_persons' => array (
+                    'name' => 'contact_persons',
+                    'vname' => 'LBL_CONTACT_PERSONS',
+                    'source' => 'non-db',
+                    'type' => 'link',
+                    'bean_name' => 'Contact',
+                    'module' => 'Contacts',
+                    'relationship' => 'contact_contact_person_for__mymodules'
+                ),
+            ),
+            'indices' => array (),
+            'relationships' => array (),
+        );
+        $m = $this->create();
+        $m->addField("contact_persons", 'link', array (
+            'module' => 'Contacts',
+            'relationship_name' => 'contact_person_for'
         ));
         $dic = $m->get();
         $this->assertEquals($real_dic, $dic[$this->object_name]);
@@ -989,6 +1073,196 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
         ));
         $dic = $m->get();
         $this->assertTrue(!isset($dic[$this->object_name]['fields']['test_remove']['len']));
+    }
+
+    public function test_addRelationship()
+    {
+        $real_dic = array (
+            'favorites' => true,
+            'fields' => array (
+                'account_id' => array (
+                    'name' => 'account_id',
+                    'vname' => 'LBL_ACCOUNT',
+                    'required' => false,
+                    'reportable' => true,
+                    'audited' => true,
+                    'importable' => 'true',
+                    'massupdate' => false,
+                    'type' => 'id',
+                ),
+                'account_name' => array (
+                    'name' => 'account_name',
+                    'vname' => 'LBL_ACCOUNT',
+                    'required' => false,
+                    'reportable' => true,
+                    'audited' => true,
+                    'importable' => 'true',
+                    'massupdate' => false,
+                    'source' => 'non-db',
+                    'type' => 'relate',
+                    'rname' => 'name',
+                    'table' => 'accounts',
+                    'id_name' => 'account_id',
+                    'module' => 'Accounts',
+                ),
+                'account_link' => array (
+                    'name' => 'account_link',
+                    'vname' => 'LBL_ACCOUNT',
+                    'source' => 'non-db',
+                    'type' => 'link',
+                    'bean_name' => 'Account',
+                    'relationship' => '_mymodule_accounts',
+                    'module' => 'Accounts',
+                ),
+            ),
+            'indices' => array (
+                'idx__mymodules_account_id' => array (
+                    'type' => 'index',
+                    'name' => 'idx__mymodules_account_id',
+                    'fields' => array ('account_id'),
+                ),
+            ),
+            'relationships' => array (
+                '_mymodule_accounts' => array (
+                    'relationship_type' => 'one-to-many',
+                    'lhs_key' => 'id',
+                    'lhs_module' => 'Accounts',
+                    'lhs_table' => 'accounts',
+                    'rhs_module' => '_MyModules',
+                    'rhs_table' => '_mymodules',
+                    'rhs_key' => 'account_id',
+                ),
+            ),
+        );
+        $m = $this->create();
+        $m->addRelationships(array (
+            'Accounts'
+        ));
+        $d = $m->get();
+        $this->assertEquals($real_dic, $d[$this->object_name]);
+    }
+
+    public function test_addRelationshipNamedSimple()
+    {
+        $real_dic = array (
+            'favorites' => true,
+            'fields' => array (
+                'store_id' => array (
+                    'name' => 'store_id',
+                    'vname' => 'LBL_STORE',
+                    'required' => false,
+                    'reportable' => true,
+                    'audited' => true,
+                    'importable' => 'true',
+                    'massupdate' => false,
+                    'type' => 'id',
+                ),
+                'store_name' => array (
+                    'name' => 'store_name',
+                    'vname' => 'LBL_STORE',
+                    'required' => false,
+                    'reportable' => true,
+                    'audited' => true,
+                    'importable' => 'true',
+                    'massupdate' => false,
+                    'source' => 'non-db',
+                    'type' => 'relate',
+                    'rname' => 'name',
+                    'table' => 'accounts',
+                    'id_name' => 'store_id',
+                    'module' => 'Accounts',
+                ),
+                'store_link' => array (
+                    'name' => 'store_link',
+                    'vname' => 'LBL_STORE',
+                    'source' => 'non-db',
+                    'type' => 'link',
+                    'bean_name' => 'Account',
+                    'relationship' => '_mymodule_store_accounts',
+                    'module' => 'Accounts',
+                ),
+            ),
+            'indices' => array (
+                'idx__mymodules_store_id' => array (
+                    'type' => 'index',
+                    'name' => 'idx__mymodules_store_id',
+                    'fields' => array ('store_id'),
+                ),
+            ),
+            'relationships' => array (
+                '_mymodule_store_accounts' => array (
+                    'relationship_type' => 'one-to-many',
+                    'lhs_key' => 'id',
+                    'lhs_module' => 'Accounts',
+                    'lhs_table' => 'accounts',
+                    'rhs_module' => '_MyModules',
+                    'rhs_table' => '_mymodules',
+                    'rhs_key' => 'store_id',
+                ),
+            ),
+        );
+        $m = $this->create();
+        $m->addRelationships(array (
+            'store' => 'Accounts'
+        ));
+        $d = $m->get();
+        $this->assertEquals($real_dic, $d[$this->object_name]);
+    }
+
+    public function test_addRelationshipRequired()
+    {
+        $m = $this->create();
+        $m->addRelationships(array (
+            'Accounts' => array ('required' => true)
+        ));
+        $d = $m->get();
+        $this->assertEquals(false, $d[$this->object_name]['fields']['account_id']['required']);
+        $this->assertEquals(true, $d[$this->object_name]['fields']['account_name']['required']);
+    }
+
+    public function test_addRelationshipRequired2()
+    {
+        $m = $this->create();
+        $m->addRelationships(array (
+            'store' => array ('module' => 'Accounts', 'required' => true)
+        ));
+        $d = $m->get();
+        $this->assertEquals(false, $d[$this->object_name]['fields']['store_id']['required']);
+        $this->assertEquals(true, $d[$this->object_name]['fields']['store_name']['required']);
+    }
+
+    public function test_addRelationshipNonRequired()
+    {
+        $m = $this->create();
+        $m->addRelationships(array (
+            'Accounts' => array ('required' => false)
+        ));
+        $d = $m->get();
+        $this->assertEquals(false, $d[$this->object_name]['fields']['account_id']['required']);
+        $this->assertEquals(false, $d[$this->object_name]['fields']['account_name']['required']);
+    }
+
+    public function test_addRelationshipNonRequiredDefault()
+    {
+        $m = $this->create();
+        $m->addRelationships(array (
+            'Accounts'
+        ));
+        $d = $m->get();
+        $this->assertEquals(false, $d[$this->object_name]['fields']['account_id']['required']);
+        $this->assertEquals(false, $d[$this->object_name]['fields']['account_name']['required']);
+    }
+
+    public function test_addRelationshipVName()
+    {
+        $m = $this->create();
+        $m->addRelationships(array (
+            'Accounts' => array ('vname' => 'LBL_FGHJ')
+        ));
+        $d = $m->get();
+        $this->assertEquals('LBL_FGHJ', $d[$this->object_name]['fields']['account_id']['vname']);
+        $this->assertEquals('LBL_FGHJ', $d[$this->object_name]['fields']['account_name']['vname']);
+        $this->assertEquals('LBL_FGHJ', $d[$this->object_name]['fields']['account_link']['vname']);
     }
 
 }

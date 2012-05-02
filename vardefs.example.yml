@@ -1,5 +1,10 @@
 ################################################
 # Vardef example
+#
+# For more examples and a more detailed 
+# reference on what gets generated, see
+# ./VardefModifier/Test.php
+#
 ################################################
 ---
 #################################################
@@ -57,8 +62,39 @@ add:
             - codes
 
         link:
-            # Will create a link field called contacts
+            #################################################
+            # Will create a link to the Contacts module where
+            # on the other side where added a relationship
+            # to the current module
+            # eg this where added written on the Contacts vardef.yml
+            #   add:
+            #       relationships:
+            #           - <module name>
+            #
+            # the name of the link field will be 'contacts'
+            #
             - Contacts
+            #################################################
+
+            #################################################
+            # Adds a link field for a named relationship 
+            # in the Cases module vardef.yml
+            #
+            # If this where added:
+            #   add:
+            #       relationships:
+            #           owner: <module name>
+            # 
+            # The following will link up the relationship
+            # on this side.
+            #
+            # The name of the link field will be 'owned_cases'
+            #
+            owned_cases:
+                module: Cases
+                relationship_name: owner
+            #################################################
+
     #################################################
 
     #################################################
@@ -117,9 +153,12 @@ add:
         #
         # In this case a index will NOT be added to task_id
         #
+        # The label LBL_MY_TASK_LABEL will be set to all fields added
+        #
         # The relationship name of this relation will be <object name>_tasks
         Tasks:
             required: true
+            vname: LBL_MY_TASK_LABEL
             index: false
         #################################################
 

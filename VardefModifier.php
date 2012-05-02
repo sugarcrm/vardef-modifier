@@ -716,8 +716,6 @@ class VardefModifier
     /**
      * Adds a link field
      *
-     * You have to specify module and relationship in the settings array
-     *
      * @param string $name
      * @param array $settings
      * @return \VardefModifier
@@ -731,17 +729,23 @@ class VardefModifier
         }
 
         $object_name = self::getObjectName($settings['module']);
+        $relationship_names = array ($object_name);
 
-        if (empty($settings['relationship']))
+        if (!empty($settings['relationship_name']))
         {
-            $settings['relationship'] = strtolower(
-                $object_name . '_' . $this->module_name
-            );
+            $relationship_names[] = $settings['relationship_name'];
+            // No need to store this in the vardef...
+            unset($settings['relationship_name']);
         }
+
+        $relationship_names[] = $this->module_name;
 
         $this->addFieldToVardef($name, array_merge(
             $this->getDefault('link'),
-            array ('bean_name' => $object_name),
+            array (
+                'bean_name' => $object_name,
+                'relationship' => strtolower(implode('_', $relationship_names))
+            ),
             $settings
         ));
 
