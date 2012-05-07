@@ -35,6 +35,15 @@ relate: { source: non-db, type: relate }
 readonly: { type: readonly }
 name: { rname: name }
 link: { source: non-db, type: link }
+address:
+    all:
+        type: varchar
+        merge_filter: enabled
+    street: { len: 150 }
+    city: { len: 100 }
+    state: { len: 100 }
+    postalcode: { len: 20 }
+    country: {}
 ##############################################################
 # The Relationship base
 relationship: 
@@ -45,6 +54,21 @@ relationship:
     relationship: 
         relationship_type: one-to-many
         lhs_key: id
+##############################################################
+#
+Activites:
+    all:
+        link: {}
+        relationship:
+            lhs_key: id
+            rhs_key: parent_id
+            relationship_type: one-to-many
+            relationship_role_column: parent_type
+    Tasks: { link: {}, relationship: {} }
+    Notes: { link: {}, relationship: {} }
+    Meetings: { link: {}, relationship: {} }
+    Calls: { link: {}, relationship: {} }
+    Emails: { link: {}, relationship: {} }
 ##############################################################
 # The Index base
 index: { type: index }

@@ -105,31 +105,36 @@ Installs an empty yaml vardef addition for a module
 
     private function getPhpTemplate($module)
     {
+        $class_name = __CLASS__;
         return <<<PHP
 <?php
 
+/* Installed by $class_name */
+if (!isset(\$dictionary) || !is_array(\$dictionary))
+    global \$dictionary;
 {$this->getPhpCode($module)}
+/* End installation */
 
 PHP;
     }
 
     private function getPhpCode($module)
     {
-        $class_name = __CLASS__;
         return <<<PHP
-/* Installed by $class_name */
 require_once '$this->modifier_dir/VardefModifier.php';
 \$dictionary = VardefModifier::modify("$module", \$dictionary)->
     yaml("{$this->getYamlFilePath($module)}")->
     get();
-/* End installation */
 PHP;
     }
 
     private function getPhpCoreVardefAddition($module)
     {
+        $class_name = __CLASS__;
         return <<<PHP
+/* Installed by $class_name */
 {$this->getPhpCode($module)}
+/* End installation */
 
 PHP;
     }

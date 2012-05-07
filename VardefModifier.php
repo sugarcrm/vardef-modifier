@@ -328,6 +328,40 @@ class VardefModifier
     }
 
     /**
+     * @param array $settings
+     * @return \VardefModifier
+     */
+    private function addActivityRelationship(array $settings)
+    {
+        $defaults = self::merge($this->getDefault('Activites'), $settings);
+        $all = $defaults['all'];
+        unset($defaults['all']);
+        foreach ($defaults as $module => $settings)
+        {
+            if (is_array($settings))
+            {
+                $table_name = self::_getTableName($module);
+                $relationship_name = $this->getTableName() . '_activities_' . $table_name;
+                $settings = self::merge(self::merge($all, array (
+                    'link' => array (
+                        'relationship' => $relationship_name,
+                    ),
+                    'relationship' => array (
+                        'lhs_module' => $this->module_name,
+                        'lhs_table' => $this->getTableName(),
+                        'rhs_module' => $module,
+                        'rhs_table' => self::_getTableName($module),
+                        'relationship_role_column_value' => $this->module_name,
+                    )
+                )), $settings);
+                $this->addLink($module, $settings['link']);
+                $this->vardef['relationships'][$relationship_name] = $settings['relationship'];
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Adds a relationship to the vardef
      *
      * @param string $name: name of the relation or the module name
@@ -336,6 +370,12 @@ class VardefModifier
      */
     public function addRelationship($name, $settings = array ())
     {
+        switch ($name)
+        {
+            case 'Activites':
+                return $this->addActivityRelationship($settings);
+        }
+
         $relationship_names = array ($this->object_name);
         if (is_string($settings))
         {
@@ -542,6 +582,9 @@ class VardefModifier
             case 'relate':
                 $this->addRelate($name, $settings);
                 break;
+            case 'address':
+                $this->addAddress($name, $settings);
+                break;
             default:
                 if ($this->hasDefault($type))
                 {
@@ -688,6 +731,32 @@ class VardefModifier
             $default,
             $settings
         );
+    }
+
+    /**
+     * @param string $name
+     * @param array $settings
+     */
+    private function addAddress($name, array $settings = array ())
+    {
+        $defaults = self::merge($this->getDefault('address'), $settings);
+        $all = $defaults['all'];
+        unset($defaults['all']);
+        if (empty($all['group']))
+            $all['group'] = $name . '_address';
+        foreach ($defaults as $field_name => $field_settings)
+        {
+            if (is_array($field_settings))
+            {
+                $field_settings = self::merge($all, $field_settings);
+                $this->addField(
+                    $name . '_address_' . $field_name,
+                    $field_settings['type'],
+                    $field_settings
+                );
+            }
+        }
+        return $this;
     }
 
     /**
