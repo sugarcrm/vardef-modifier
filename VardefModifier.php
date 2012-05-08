@@ -392,6 +392,17 @@ class VardefModifier
             $relationship_names[] = $name;
         }
 
+        switch ($settings['module'])
+        {
+            case 'Contacts':
+                $settings = self::merge(array (
+                    'name' => array (
+                        'rname'=>'last_name',
+                        'db_concat_fields'=> array('first_name', 'last_name'),
+                    )
+                ), $settings);
+        }
+
         $relationship_names[] = $settings['module'];
         $relationship_name = strtolower(implode('_', $relationship_names));
 
@@ -435,6 +446,9 @@ class VardefModifier
         // Make sure that the id field name are synced
         $_settings['name']['id_name'] = $_settings['id']['name'];
         $_settings['relationship']['rhs_key'] = $_settings['id']['name'];
+
+        // Make sure that the link field names are synced
+        $_settings['name']['link'] = $_settings['link']['name'];
 
         // Make sure that the relationship names are synced
         $relationship_name = $_settings['relationship']['name'];
