@@ -34,7 +34,7 @@ bool: { type: bool }
 float: { type: float }
 phone: { type: phone, dbType: varchar, len: 100 }
 id: { type: id }
-currency: { type: currency, len: "26,2", dbType: decimal }
+currency: { type: currency, dbType: double }
 enum: { type: enum }
 multienum: { type: multienum, isMultiSelect: true }
 relate: { source: non-db, type: relate }
