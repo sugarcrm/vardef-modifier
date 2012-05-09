@@ -82,6 +82,14 @@ add:
         #################################################
 
         #################################################
+        # Adds new address group containing following fields:
+        #
+        #    - primary_address_street
+        #    - primary_address_city
+        #    - primary_address_state
+        #    - primary_address_postalcode
+        #    - primary_address_country
+        #
         address:
             - primary
         #################################################

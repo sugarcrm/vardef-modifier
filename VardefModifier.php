@@ -545,26 +545,6 @@ class VardefModifier
     }
 
     /**
-     * Supported field types:
-     *
-     *    - enum
-     *    - multienum
-     *    - link
-     *    - currency
-     *    - relate
-     *    - varchar
-     *    - int
-     *    - text
-     *    - date
-     *    - decimal
-     *    - image
-     *    - datetimecombo
-     *    - url
-     *    - datetime
-     *    - bool
-     *    - float
-     *    - phone
-     *    - id
      *
      * @param string $name
      * @param string $type

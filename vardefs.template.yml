@@ -26,6 +26,10 @@
 #        phone:
 #        id:
 #        readonly:
+#        password:
+#        name:
+#        link:
+#        address:
 #    relationships:
 #    indices:
 
