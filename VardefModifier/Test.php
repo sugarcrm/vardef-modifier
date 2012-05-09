@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__DIR__) . '/VardefModifier.php';
+require_once dirname(dirname(__FILE__)) . '/VardefModifier.php';
 
 /**
  * @author Emil Kilhage

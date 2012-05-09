@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/Exception.php';
+require_once dirname(__FILE__) . '/Exception.php';
 
 /**
  * @author Emil Kilhage
@@ -42,7 +42,7 @@ Installs an empty yaml vardef addition for a module
     public function __construct($root_dir, array $args)
     {
         $this->root_dir = $root_dir;
-        $this->modifier_dir = str_replace("$this->root_dir/", '', dirname(__DIR__));
+        $this->modifier_dir = str_replace("$this->root_dir/", '', dirname(dirname(__FILE__)));
         $this->parseArgs($args);
     }
 
@@ -99,7 +99,7 @@ Installs an empty yaml vardef addition for a module
 
     private function getYamlTemplate($module)
     {
-        $file = file_get_contents(dirname(__DIR__) . '/vardefs.template.yml');
+        $file = file_get_contents(dirname(dirname(__FILE__)) . '/vardefs.template.yml');
         return str_replace('$module', $module, $file);
     }
 

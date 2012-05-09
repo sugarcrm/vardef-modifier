@@ -10,9 +10,9 @@
  */
 php_sapi_name() === 'cli' or die("Could only be executed from cli!");
 
-require_once __DIR__ . '/VardefModifier/Installer.php';
+require_once dirname(__FILE__) . '/VardefModifier/Installer.php';
 
-$dir = __DIR__;
+$dir = dirname(__FILE__);
 
 while (1)
 {
