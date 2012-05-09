@@ -2,10 +2,10 @@
 
 if (!class_exists('Spyc'))
 {
-    require_once __DIR__ . '/spyc.php';
+    require_once dirname(__FILE__) . '/spyc.php';
 }
 
-require_once __DIR__ . '/VardefModifier/Exception.php';
+require_once dirname(__FILE__) . '/VardefModifier/Exception.php';
 
 /**
  * Simplifes modifications of SugarCrm vardef definitions
@@ -40,7 +40,7 @@ class VardefModifier
     {
         if (!isset(self::$_defaults))
         {
-            $file = __DIR__ . '/defaults.yml';
+            $file = dirname(__FILE__) . '/defaults.yml';
             self::$_defaults = spyc_load_file($file);
         }
     }
