@@ -25,10 +25,15 @@ add:
     #################################################
     # Adds fields to the vardef
     #
+    # See ./vardefs.template.yml to see all available types
+    # Also look in ./defaults.yml for what default
+    # properties all types contains
+    #
     # The format of all labels will be:
     #   LBL_<field name to upper case>
     #
     fields:
+        #################################################
         # Add varchar fields..
         varchar:
             # Without any options
@@ -36,18 +41,30 @@ add:
             # Add a field with properties
             my_other_field:
                 len: 3
+        #################################################
 
-        # Add integer fields, to see all suported field types see VardefModifier::addField
+        #################################################
+        # Adds integer fields
         int:
             # see https://github.com/tekimaki/spyc for complete yaml syntax reference.
-            my_int_field: { int: 2 }
+            my_int_field: { len: 2 }
+        #################################################
+        
+        #################################################
+        # Adds text fields
+        text:
+            - my_textarea
+        #################################################
 
+        #################################################
         relate:
             account_type:
                 # the module property is always required in this field type
                 module: Accounts
                 rname: type
+        #################################################
 
+        #################################################
         enum:
             # The options name of this field will be:
             # <module name to lower case>_type_list
@@ -55,12 +72,21 @@ add:
             kind:
                 required: true
                 options: global_kinds_list
+        #################################################
 
+        #################################################
         multienum:
             # The options name of this field will be:
             # <module name to lower case>_codes_list
             - codes
+        #################################################
 
+        #################################################
+        address:
+            - primary
+        #################################################
+
+        #################################################
         link:
             #################################################
             # Will create a link to the Contacts module where
@@ -182,6 +208,24 @@ add:
                 function:
                     name: getProductTypeNameDropDown
                     returns: html
+        #################################################
+
+        #################################################
+        # The activity relation is a rather special case.
+        # 
+        # What this does is to add relationship definitions
+        # to the Tasks, Notes, Meetings, Calls and Emails
+        # modules in order to be able to add the activity
+        # subpanel definitions to the modles detail view.
+        #
+        # The link field names will be:
+        #   - tasks: link to the Tasks module
+        #   - notes: link to the Notes module
+        #   - meetings: link to the Meetings module
+        #   - calls: link to the Calls module
+        #   - emails: link to the Emails module
+        # 
+        - Activites
         #################################################
 
     #################################################
