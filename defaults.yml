@@ -41,6 +41,7 @@ multienum: { type: multienum, isMultiSelect: true }
 relate: { source: non-db, type: relate }
 readonly: { type: readonly }
 name: { rname: name }
+password: { type: password, dbType: varchar }
 link: { source: non-db, type: link }
 address:
     all:
@@ -53,12 +54,12 @@ address:
     country: {}
 ##############################################################
 # The Relationship base
-relationship: 
+relationship:
     id: {}
     name: {}
     link: {}
     index: {}
-    relationship: 
+    relationship:
         relationship_type: one-to-many
         lhs_key: id
 ##############################################################
