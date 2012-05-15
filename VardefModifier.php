@@ -397,7 +397,7 @@ class VardefModifier
             case 'Contacts':
                 $settings = self::merge(array (
                     'name' => array (
-                        'rname'=>'last_name',
+                        'rname'=>'name',
                         'db_concat_fields'=> array('first_name', 'last_name'),
                     )
                 ), $settings);
@@ -630,6 +630,8 @@ class VardefModifier
         {
             $this->addRelationship('Currencies', array (
                 'id' => array (
+                    'type' => 'currency_id',
+                    'dbType' => 'id',
                     'group' => 'currency_id',
                     'function' => array (
                         'name' => 'getCurrencyDropDown',
