@@ -241,6 +241,9 @@ class VardefModifier
                 throw new VardefModifier_Exception("Invalid Array Formatting");
             switch ($key)
             {
+                case 'related_calc_fields':
+                    $this->addRelatedCalcFields($fields);
+                    break;
                 case 'fields':
                     $this->addFields($fields);
                     break;
@@ -254,6 +257,17 @@ class VardefModifier
                     throw new VardefModifier_Exception("Invalid key: $key");
             }
         }
+        return $this;
+    }
+
+    public function addRelatedCalcFields(array $links)
+    {
+        if (empty($this->vardef['related_calc_fields']))
+            $this->vardef['related_calc_fields'] = array ();
+        $this->vardef['related_calc_fields'] = array_merge(
+            $this->vardef['related_calc_fields'],
+            $links
+        );
         return $this;
     }
 
