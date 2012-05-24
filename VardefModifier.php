@@ -627,6 +627,7 @@ class VardefModifier
                     'type' => 'currency_id',
                     'dbType' => 'id',
                     'group' => 'currency_id',
+                    'default' => '-99',
                     'function' => array (
                         'name' => 'getCurrencyDropDown',
                         'returns' => 'html'
