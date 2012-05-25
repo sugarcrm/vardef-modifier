@@ -372,7 +372,7 @@ class VardefModifier
     {
         switch ($name)
         {
-            case 'Activites':
+            case 'Activities':
                 return $this->addActivityRelationship($settings);
         }
 
