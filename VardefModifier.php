@@ -350,7 +350,7 @@ class VardefModifier
      */
     private function addActivityRelationship(array $settings)
     {
-        $defaults = self::merge($this->getDefault('Activites'), $settings);
+        $defaults = self::merge($this->getDefault('Activities'), $settings);
         $all = $defaults['all'];
         unset($defaults['all']);
         foreach ($defaults as $module => $settings)

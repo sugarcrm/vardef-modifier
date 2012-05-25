@@ -576,7 +576,7 @@ class VardefModifier_Test extends PHPUnit_Framework_TestCase
         );
         $dic = $this->create()
             ->addRelationships(array (
-                'Activites'
+                'Activities'
             ))
             ->get();
         $this->assertEquals($rd, $dic);

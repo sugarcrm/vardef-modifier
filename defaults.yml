@@ -64,7 +64,7 @@ relationship:
         lhs_key: id
 ##############################################################
 #
-Activites:
+Activities:
     all:
         link: {}
         relationship:
