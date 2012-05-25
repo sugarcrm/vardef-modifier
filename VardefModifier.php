@@ -260,12 +260,15 @@ class VardefModifier
         return $this;
     }
 
+    /**
+     * @return \VardefModifier
+     */
     public function addRelatedCalcFields(array $links)
     {
-        if (empty($this->vardef['related_calc_fields']))
-            $this->vardef['related_calc_fields'] = array ();
         $this->vardef['related_calc_fields'] = array_merge(
-            $this->vardef['related_calc_fields'],
+            empty($this->vardef['related_calc_fields'])
+                ? array ()
+                : $this->vardef['related_calc_fields'],
             $links
         );
         return $this;
