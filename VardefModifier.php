@@ -241,6 +241,9 @@ class VardefModifier
                 throw new VardefModifier_Exception("Invalid Array Formatting");
             switch ($key)
             {
+                case 'related_calc_fields':
+                    $this->addRelatedCalcFields($fields);
+                    break;
                 case 'fields':
                     $this->addFields($fields);
                     break;
@@ -254,6 +257,17 @@ class VardefModifier
                     throw new VardefModifier_Exception("Invalid key: $key");
             }
         }
+        return $this;
+    }
+
+    public function addRelatedCalcFields(array $links)
+    {
+        if (empty($this->vardef['related_calc_fields']))
+            $this->vardef['related_calc_fields'] = array ();
+        $this->vardef['related_calc_fields'] = array_merge(
+            $this->vardef['related_calc_fields'],
+            $links
+        );
         return $this;
     }
 
@@ -397,7 +411,7 @@ class VardefModifier
             case 'Contacts':
                 $settings = self::merge(array (
                     'name' => array (
-                        'rname'=>'last_name',
+                        'rname'=>'name',
                         'db_concat_fields'=> array('first_name', 'last_name'),
                     )
                 ), $settings);
@@ -610,7 +624,10 @@ class VardefModifier
         {
             $this->addRelationship('Currencies', array (
                 'id' => array (
+                    'type' => 'currency_id',
+                    'dbType' => 'id',
                     'group' => 'currency_id',
+                    'default' => '-99',
                     'function' => array (
                         'name' => 'getCurrencyDropDown',
                         'returns' => 'html'
