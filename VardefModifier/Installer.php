@@ -142,7 +142,7 @@ PHP;
     private function getYamlFilePath($module)
     {
         $dir = $this->core ? "modules/$module" : "custom/modules/$module";
-        is_dir($dir) or mkdir($dir . 0755, true);
+        is_dir($dir) or mkdir($dir, 0755, true);
         return "$dir/vardefs.yml";
     }
 
@@ -151,7 +151,7 @@ PHP;
         $dir = $this->core ?
             "modules/$module" :
             "custom/Extension/modules/$module/Ext/Vardefs";
-        is_dir($dir) or mkdir($dir . 0755, true);
+        is_dir($dir) or mkdir($dir, 0755, true);
         return "$dir/" . ($this->core ? "vardefs.php" : "yaml_vardefs.php");
     }
 
