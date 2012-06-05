@@ -122,7 +122,52 @@ class VardefModifier
      */
     private static function _getTableName($module_name)
     {
-        return strtolower($module_name);
+        static $table_names = array (), $loading = false;
+        // Since Sugar feel for rebuilding the vardefs every time you load a bean in developer mode, this is needed..........
+        if ($loading) return null;
+        $loading = true;
+        if (empty($table_names[$module_name]))
+        {
+            if (class_exists('BeanFactory'))
+            {
+                if (($bean = BeanFactory::getBean($module_name)))
+                {
+                    $table_names[$module_name] = $bean->table_name;
+                }
+                else
+                {
+                    throw new Exception("Invalid Module Name: $module_name");
+                }
+            }
+            elseif (class_exists('SugarModule'))
+            {
+                if (($bean = SugarModule::get($module_name)->loadBean()))
+                {
+                    $table_names[$module_name] = $bean->table_name;
+                }
+                else
+                {
+                    throw new Exception("Invalid Module Name: $module_name");
+                }
+            }
+            elseif (function_exists('loadBean'))
+            {
+                if (($bean = loadBean($module_name)))
+                {
+                    $table_names[$module_name] = $bean->table_name;
+                }
+                else
+                {
+                    throw new Exception("Invalid Module Name: $module_name");
+                }
+            }
+            else
+            {
+                throw new Exception("Unsupported Sugar Version");
+            }
+        }
+        $loading = false;
+        return $table_names[$module_name];
     }
 
     /**
