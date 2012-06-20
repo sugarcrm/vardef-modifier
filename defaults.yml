@@ -52,6 +52,22 @@ address:
     state: { len: 100 }
     postalcode: { len: 20 }
     country: {}
+flex_relate:
+    id:
+        type: id
+    name:
+        type: parent
+        source: non-db
+        options: parent_type_display
+        parent_type: record_type_display
+    type:
+        dbType: varchar
+flex_relate_link:
+    prefix: parent
+    link: {}
+    relationship:
+        lhs_key: id
+        relationship_type: one-to-many
 ##############################################################
 # The Relationship base
 relationship:
@@ -65,13 +81,6 @@ relationship:
 ##############################################################
 #
 Activities:
-    all:
-        link: {}
-        relationship:
-            lhs_key: id
-            rhs_key: parent_id
-            relationship_type: one-to-many
-            relationship_role_column: parent_type
     Tasks: { link: {}, relationship: {} }
     Notes: { link: {}, relationship: {} }
     Meetings: { link: {}, relationship: {} }

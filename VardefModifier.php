@@ -7,6 +7,19 @@ if (!class_exists('Spyc'))
 
 require_once dirname(__FILE__) . '/VardefModifier/Exception.php';
 
+class VardefModifier_RecursiveException extends Exception
+{
+
+    public $table_name;
+
+    public function __construct($table_name)
+    {
+        $this->table_name = $table_name;
+        parent::__construct();
+    }
+
+}
+
 /**
  * Simplifes modifications of SugarCrm vardef definitions
  *
@@ -120,54 +133,43 @@ class VardefModifier
      * @param string $module_name
      * @return string
      */
-    private static function _getTableName($module_name)
+    private static function _getTableName($module_name, array $dictionary)
     {
-        static $table_names = array (), $loading = false;
-        // Since Sugar feel for rebuilding the vardefs every time you load a bean in developer mode, this is needed..........
-        if ($loading) return null;
-        $loading = true;
-        if (empty($table_names[$module_name]))
+        static $table_names = array (), $depth = 0;
+        $depth++;
+        if (!isset($table_names[$module_name]) && $depth < 5)
         {
-            if (class_exists('BeanFactory'))
+            $object_name = self::getObjectName($module_name);
+            if (isset($dictionary[$object_name]['table']))
             {
-                if (($bean = BeanFactory::getBean($module_name)))
-                {
-                    $table_names[$module_name] = $bean->table_name;
-                }
-                else
-                {
-                    throw new Exception("Invalid Module Name: $module_name");
-                }
-            }
-            elseif (class_exists('SugarModule'))
-            {
-                if (($bean = SugarModule::get($module_name)->loadBean()))
-                {
-                    $table_names[$module_name] = $bean->table_name;
-                }
-                else
-                {
-                    throw new Exception("Invalid Module Name: $module_name");
-                }
-            }
-            elseif (function_exists('loadBean'))
-            {
-                if (($bean = loadBean($module_name)))
-                {
-                    $table_names[$module_name] = $bean->table_name;
-                }
-                else
-                {
-                    throw new Exception("Invalid Module Name: $module_name");
-                }
+                $table_names[$module_name] = $dictionary[$object_name]['table'];
             }
             else
             {
-                throw new Exception("Unsupported Sugar Version");
+                global $dictionary;
+                if (isset($dictionary[$object_name]['table']))
+                {
+                    $table_names[$module_name] = $dictionary[$object_name]['table'];
+                }
+                else
+                {
+                    if (class_exists('BeanFactory'))     $bean = BeanFactory::getBean($module_name);
+                    elseif (class_exists('SugarModule')) $bean = SugarModule::get($module_name)->loadBean();
+                    elseif (function_exists('loadBean')) $bean = loadBean($module_name);
+
+                    if ($bean instanceof SugarBean)
+                    {
+                        $table_names[$module_name] = $bean->getTableName();
+                    }
+                    else
+                    {
+                        throw new Exception("Unable to load Bean: $module_name");
+                    }
+                }
             }
         }
-        $loading = false;
-        return $table_names[$module_name];
+        $depth--;
+        return isset($table_names[$module_name]) ? $table_names[$module_name] : null;
     }
 
     /**
@@ -282,7 +284,7 @@ class VardefModifier
     {
         foreach ($keys as $key => $fields)
         {
-            if (!is_array ($fields))
+            if (!is_array($fields))
                 throw new VardefModifier_Exception("Invalid Array Formatting");
             switch ($key)
             {
@@ -314,8 +316,8 @@ class VardefModifier
         foreach ($indices as $fields => $settings)
         {
             if (is_int($fields) &&
-                    (is_string($settings) ||
-                    (is_array ($settings) && isset($settings[0]))))
+                (is_string($settings) ||
+                (is_array($settings) && isset($settings[0]))))
             {
                 $fields = $settings;
                 $settings = array ();
@@ -345,7 +347,7 @@ class VardefModifier
         }
 
         $fields = (array) $fields;
-        $name = 'idx_' . $this->getTableName() . '_' . implode('_', $fields);
+        $name = 'idx_' . implode('_', $fields);
         $default = array ('name' => $name, 'fields' => $fields);
         $index = array_merge($this->getDefault('index'), $default, $settings);
         $this->vardef['indices'][$index['name']] = $index;
@@ -378,31 +380,85 @@ class VardefModifier
      */
     private function addActivityRelationship(array $settings)
     {
-        $defaults = self::merge($this->getDefault('Activities'), $settings);
-        $all = $defaults['all'];
-        unset($defaults['all']);
+        $defaults = self::merge(
+                $this->getDefault('Activities'), $settings
+        );
         foreach ($defaults as $module => $settings)
         {
-            if (is_array($settings))
-            {
-                $table_name = self::_getTableName($module);
-                $relationship_name = $this->getTableName() . '_activities_' . $table_name;
-                $settings = self::merge(self::merge($all, array (
-                    'link' => array (
-                        'relationship' => $relationship_name,
-                    ),
-                    'relationship' => array (
-                        'lhs_module' => $this->module_name,
-                        'lhs_table' => $this->getTableName(),
-                        'rhs_module' => $module,
-                        'rhs_table' => self::_getTableName($module),
-                        'relationship_role_column_value' => $this->module_name,
-                    )
-                )), $settings);
-                $this->addLink($module, $settings['link']);
-                $this->vardef['relationships'][$relationship_name] = $settings['relationship'];
-            }
+            $this->addFlexRelateLink($module, $settings);
         }
+        return $this;
+    }
+
+    /**
+     * @param type $module
+     * @param array $settings
+     */
+    public function addFlexRelateLink($name, $settings = array ())
+    {
+        if (empty($settings['module']))
+        {
+            $settings['module'] = $name;
+            $name = strtolower($name);
+        }
+
+        $settings = self::merge(
+                $this->getDefault('flex_relate_link'), $settings
+        );
+
+        $module = $settings['module'];
+
+        $table_name = self::_getTableName($module, $this->dictionary);
+        $relationship_name = $this->getTableName() . '_flex_relate_' . $table_name;
+
+        $id_name = $settings['prefix'] . '_id';
+        $type_name = $settings['prefix'] . '_type';
+
+        $settings = self::merge($settings, array (
+                'link' => array (
+                    'relationship' => $relationship_name,
+                ),
+                'relationship' => array (
+                    'lhs_module' => $this->module_name,
+                    'lhs_table' => $this->getTableName(),
+                    'rhs_key' => $id_name,
+                    'rhs_module' => $module,
+                    'rhs_table' => $table_name,
+                    'relationship_role_column_value' => $this->module_name,
+                    'relationship_role_column' => $type_name,
+                )
+            ));
+
+        $this->addLink($module, $settings['link']);
+        $this->vardef['relationships'][$relationship_name] = $settings['relationship'];
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param array $settings
+     * @return \VardefModifier
+     */
+    private function addFlexRelate($prefix, $settings = array ())
+    {
+        $defaults = self::merge(
+                $this->getDefault('flex_relate'), $settings
+        );
+
+        $id_name = $prefix . '_id';
+        $name_name = $prefix . '_name';
+        $type_name = $prefix . '_type';
+
+        $defaults['name']['id_name'] = $id_name;
+        $defaults['name']['type_name'] = $type_name;
+        $defaults['type']['type'] = $type_name;
+
+        $this->addField($id_name, 'id', $defaults['id']);
+        $this->addField($name_name, 'varchar', $defaults['name']);
+        $this->addField($type_name, 'varchar', $defaults['type']);
+        $this->addIndex($id_name);
+
         return $this;
     }
 
@@ -441,11 +497,11 @@ class VardefModifier
         {
             case 'Contacts':
                 $settings = self::merge(array (
-                    'name' => array (
-                        'rname'=>'name',
-                        'db_concat_fields'=> array('first_name', 'last_name'),
-                    )
-                ), $settings);
+                        'name' => array (
+                            'rname' => 'name',
+                            'db_concat_fields' => array ('first_name', 'last_name'),
+                        )
+                        ), $settings);
         }
 
         $relationship_names[] = $settings['module'];
@@ -455,30 +511,30 @@ class VardefModifier
         $rhs_key = $name . '_id';
 
         $_settings = static::merge($this->getDefault('relationship'), array (
-            'id' => array (
-                'name' => $rhs_key,
-                'vname' => $vname
-            ),
-            'name' => array (
-                'name' => $name . '_name',
-                'vname' => $vname,
-                'module' => $settings['module'],
-            ),
-            'link' => array (
-                'name' => $name . '_link',
-                'vname' => $vname,
-                'module' => $settings['module']
-            ),
-            'index' => array (),
-            'relationship' => array (
-                'lhs_module' => $settings['module'],
-                'lhs_table' => self::_getTableName($settings['module']),
-                'rhs_module' => $this->module_name,
-                'rhs_table' => $this->getTableName(),
-                'rhs_key' => $rhs_key,
-                'name' => $relationship_name
-            ),
-        ));
+                'id' => array (
+                    'name' => $rhs_key,
+                    'vname' => $vname
+                ),
+                'name' => array (
+                    'name' => $name . '_name',
+                    'vname' => $vname,
+                    'module' => $settings['module'],
+                ),
+                'link' => array (
+                    'name' => $name . '_link',
+                    'vname' => $vname,
+                    'module' => $settings['module']
+                ),
+                'index' => array (),
+                'relationship' => array (
+                    'lhs_module' => $settings['module'],
+                    'lhs_table' => self::_getTableName($settings['module'], $this->dictionary),
+                    'rhs_module' => $this->module_name,
+                    'rhs_table' => $this->getTableName(),
+                    'rhs_key' => $rhs_key,
+                    'name' => $relationship_name
+                ),
+            ));
 
         // Set the name field to required if set in the root
         if (isset($settings['required']))
@@ -534,6 +590,7 @@ class VardefModifier
      * Removes fields / properties this the vardef
      *
      * @param array $keys
+     * @return \VardefModifier
      */
     public function remove(array $values)
     {
@@ -545,6 +602,7 @@ class VardefModifier
      * Changes the default field properties
      *
      * @param array $field_defaults
+     * @return \VardefModifier
      * @throws VardefModifier_Exception
      */
     public function defaults(array $field_defaults)
@@ -571,19 +629,24 @@ class VardefModifier
     {
         foreach ($types as $type => $fields)
         {
-            if (!is_array ($fields))
-                throw new VardefModifier_Exception("Invalid Array Formatting");
-            foreach ($fields as $name => $settings)
+            if (is_array($fields) && is_string($type))
             {
-                if (is_int($name))
+                foreach ($fields as $name => $settings)
                 {
-                    $name = $settings;
-                    $this->addField($name, $type);
+                    if (is_int($name))
+                    {
+                        $name = $settings;
+                        $this->addField($name, $type);
+                    }
+                    else
+                    {
+                        $this->addField($name, $type, $settings);
+                    }
                 }
-                else
-                {
-                    $this->addField($name, $type, $settings);
-                }
+            }
+            else
+            {
+                throw new Exception("Not Implemented");
             }
         }
         return $this;
@@ -594,6 +657,7 @@ class VardefModifier
      * @param string $name
      * @param string $type
      * @param array $settings
+     * @return \VardefModifier
      */
     public function addField($name, $type, array $settings = array ())
     {
@@ -624,6 +688,12 @@ class VardefModifier
             case 'address':
                 $this->addAddress($name, $settings);
                 break;
+            case 'flex_relate_link':
+                $this->addFlexRelateLink($name, $settings);
+                break;
+            case 'flex_relate':
+                $this->addFlexRelate($name, $settings);
+                break;
             default:
                 if ($this->hasDefault($type))
                 {
@@ -640,6 +710,7 @@ class VardefModifier
     /**
      * @param string $name
      * @return boolean
+     * @return \VardefModifier
      */
     public function hasField($name)
     {
@@ -697,8 +768,8 @@ class VardefModifier
      */
     private function getTableName()
     {
-        if (!isset($this->table_name))
-            $this->table_name = self::_getTableName($this->module_name);
+        //if (!isset($this->table_name))
+        $this->table_name = self::_getTableName($this->module_name, $this->dictionary);
         return $this->table_name;
     }
 
@@ -746,9 +817,8 @@ class VardefModifier
     private function addName($name, array $settings)
     {
         return $this->addRelate($name, array_merge(
-            $this->getDefault('name'),
-            $settings
-        ));
+                    $this->getDefault('name'), $settings
+                ));
     }
 
     /**
@@ -764,14 +834,11 @@ class VardefModifier
         }
         $default = array (
             'rname' => $name,
-            'table' => self::_getTableName($settings['module']),
+            'table' => self::_getTableName($settings['module'], $this->dictionary),
             'id_name' => strtolower(self::getObjectName($settings['module'])) . '_id',
         );
         return $this->addDefaultField(
-            $name,
-            $this->getDefault('relate'),
-            $default,
-            $settings
+                $name, $this->getDefault('relate'), $default, $settings
         );
     }
 
@@ -792,9 +859,7 @@ class VardefModifier
             {
                 $field_settings = self::merge($all, $field_settings);
                 $this->addField(
-                    $name . '_address_' . $field_name,
-                    $field_settings['type'],
-                    $field_settings
+                    $name . '_address_' . $field_name, $field_settings['type'], $field_settings
                 );
             }
         }
@@ -810,18 +875,13 @@ class VardefModifier
     {
         $template = $this->getDefault('currency');
         return $this->
-            addCurrencyRelation()->
-            addDefaultField(
-                $name,
-                $template,
-                $settings
-            )->
-            addDefaultField(
-                $name . '_usdollar',
-                $template,
-                array ('group' => $name),
-                $settings
-            );
+                addCurrencyRelation()->
+                addDefaultField(
+                    $name, $template, $settings
+                )->
+                addDefaultField(
+                    $name . '_usdollar', $template, array ('group' => $name), $settings
+        );
     }
 
     /**
@@ -852,13 +912,11 @@ class VardefModifier
         $relationship_names[] = $this->module_name;
 
         $this->addFieldToVardef($name, array_merge(
-            $this->getDefault('link'),
-            array (
+                $this->getDefault('link'), array (
                 'bean_name' => $object_name,
                 'relationship' => strtolower(implode('_', $relationship_names))
-            ),
-            $settings
-        ));
+                ), $settings
+            ));
 
         return $this;
     }
@@ -892,10 +950,7 @@ class VardefModifier
     private function addEnumLike($name, array $default, array $settings)
     {
         return $this->addDefaultField(
-            $name,
-            array ('options' => strtolower($this->module_name . '_' . $name) . '_list'),
-            $default,
-            $settings
+                $name, array ('options' => strtolower($this->module_name . '_' . $name) . '_list'), $default, $settings
         );
     }
 
@@ -908,8 +963,8 @@ class VardefModifier
         $args = func_get_args();
         $args[0] = $this->getBase();
         $this->addFieldToVardef($name, call_user_func_array(
-            'array_merge', $args
-        ));
+                'array_merge', $args
+            ));
         return $this;
     }
 
@@ -930,7 +985,7 @@ class VardefModifier
         $this->vardef['fields'][$name] = array_merge(array (
             'name' => $name,
             'vname' => $this->getVName($name),
-        ), $definition);
+            ), $definition);
     }
 
     /**
