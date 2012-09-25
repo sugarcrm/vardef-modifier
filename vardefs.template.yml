@@ -27,6 +27,8 @@
 #        id:
 #        readonly:
 #        password:
+#        flex_relate:
+#        flex_relate_link:
 #        name:
 #        link:
 #        address:
