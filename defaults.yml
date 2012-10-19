@@ -16,7 +16,7 @@ _base:
 ##############################################################
 # Field bases:
 varchar: { type: varchar, len: 255 }
-int: { type: int, len: 8 }
+int: { type: int, len: 8, options: numeric_range_search_dom, enable_range_search: true }
 text: { type: text }
 date:
     type: date
