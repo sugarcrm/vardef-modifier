@@ -34,6 +34,15 @@ class VardefModifier
      * @var array
      */
     private static $_defaults;
+    
+    /**
+     * Modules that doesn't have the object name as dictionary key are listed here
+     * 
+     * @var array
+     */
+    private static $special_dictionary_key_mappings = array (
+        'Cases' => 'Case',
+    );
 
     /**
      * @param string $module_name
@@ -207,14 +216,29 @@ class VardefModifier
         $this->module_name = $module_name;
         $this->object_name = self::getObjectName($this->module_name);
         $this->dictionary = $dictionary;
+        
+        $dictionary_key = $this->getDictionaryKey();
 
-        if (!isset($this->dictionary[$this->object_name]))
+        if (!isset($this->dictionary[$dictionary_key]))
         {
-            $this->dictionary[$this->object_name] = array ();
+            $this->dictionary[$dictionary_key] = array ();
         }
 
-        $this->vardef = $this->dictionary[$this->object_name];
+        $this->vardef = $this->dictionary[$dictionary_key];
         $this->defaults = self::$_defaults;
+    }
+
+    /**
+     * @return string: the name of the dictionary key for the current module
+     */
+    public function getDictionaryKey()
+    {
+        if (isset(self::$special_dictionary_key_mappings[$this->module_name]))
+        {
+            return self::$special_dictionary_key_mappings[$this->module_name];
+        }
+
+        return $this->object_name;
     }
 
     /**
@@ -759,7 +783,7 @@ class VardefModifier
      */
     public function get()
     {
-        $this->dictionary[$this->object_name] = $this->vardef;
+        $this->dictionary[$this->getDictionaryKey()] = $this->vardef;
         return $this->dictionary;
     }
 
