@@ -371,9 +371,9 @@ class VardefModifier
         }
 
         $fields = (array) $fields;
-        $name = 'idx_' . implode('_', $fields);
-        $default = array ('name' => $name, 'fields' => $fields);
+        $default = array ('fields' => $fields);
         $index = array_merge($this->getDefault('index'), $default, $settings);
+        $index = array_merge(array ('name' => 'idx_' . implode('_', $index['fields'])), $index);
         $this->vardef['indices'][$index['name']] = $index;
         return $this;
     }
