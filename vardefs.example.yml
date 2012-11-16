@@ -65,6 +65,21 @@ add:
         #################################################
 
         #################################################
+        flex_relate:
+            insuranceproductdetail:
+                name:
+                    options: dri_insurancesubcovers_insuranceproductdetail_list
+                    parent_type: dri_insurancesubcovers_insuranceproductdetail_list
+        #################################################
+
+        #################################################
+        flex_relate_link:
+            dri_insurancesubcovers:
+                module: DRI_InsuranceSubCovers
+                prefix: gob
+        #################################################
+
+        #################################################
         enum:
             # The options name of this field will be:
             # <module name to lower case>_type_list
