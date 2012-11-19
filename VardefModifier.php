@@ -452,7 +452,6 @@ class VardefModifier
 
         $defaults['name']['id_name'] = $id_name;
         $defaults['name']['type_name'] = $type_name;
-        $defaults['type']['type'] = $type_name;
 
         $this->addField($id_name, 'id', $defaults['id']);
         $this->addField($name_name, 'varchar', $defaults['name']);
