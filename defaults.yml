@@ -35,7 +35,12 @@ bool: { type: bool }
 float: { type: float }
 phone: { type: phone, dbType: varchar, len: 100 }
 id: { type: id }
-currency: { type: currency, dbType: double }
+currency:
+    len: "11,2"
+    type: currency
+    dbType: double
+    enable_range_search: true
+    options: numeric_range_search_dom
 enum: { type: enum }
 multienum: { type: multienum, isMultiSelect: true }
 relate: { source: non-db, type: relate }
