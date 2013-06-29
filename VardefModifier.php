@@ -34,10 +34,10 @@ class VardefModifier
      * @var array
      */
     private static $_defaults;
-    
+
     /**
      * Modules that doesn't have the object name as dictionary key are listed here
-     * 
+     *
      * @var array
      */
     private static $special_dictionary_key_mappings = array (
@@ -146,7 +146,7 @@ class VardefModifier
     {
         static $table_names = array (), $depth = 0;
         $depth++;
-        if (!isset($table_names[$module_name]) && $depth < 5)
+        if (!isset($table_names[$module_name]) && $depth < 4)
         {
             $object_name = self::getObjectName($module_name);
             if (isset($dictionary[$object_name]['table']))
@@ -216,7 +216,7 @@ class VardefModifier
         $this->module_name = $module_name;
         $this->object_name = self::getObjectName($this->module_name);
         $this->dictionary = $dictionary;
-        
+
         $dictionary_key = $this->getDictionaryKey();
 
         if (!isset($this->dictionary[$dictionary_key]))
@@ -791,7 +791,6 @@ class VardefModifier
      */
     private function getTableName()
     {
-        //if (!isset($this->table_name))
         $this->table_name = self::_getTableName($this->module_name, $this->dictionary);
         return $this->table_name;
     }
