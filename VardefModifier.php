@@ -144,41 +144,38 @@ class VardefModifier
      */
     private static function _getTableName($module_name, array $dictionary)
     {
-        static $table_names = array (), $depth = 0;
-        $depth++;
-        if (!isset($table_names[$module_name]) && $depth < 4)
+        static $table_names = array ();
+
+        if (empty($table_names[$module_name]))
         {
             $object_name = self::getObjectName($module_name);
-            if (isset($dictionary[$object_name]['table']))
+            if (!empty($dictionary[$object_name]['table']))
             {
                 $table_names[$module_name] = $dictionary[$object_name]['table'];
             }
             else
             {
                 global $dictionary;
-                if (isset($dictionary[$object_name]['table']))
+                if (!empty($dictionary[$object_name]['table']))
                 {
                     $table_names[$module_name] = $dictionary[$object_name]['table'];
                 }
                 else
                 {
-                    if (class_exists('BeanFactory'))     $bean = BeanFactory::getBean($module_name);
-                    elseif (class_exists('SugarModule')) $bean = SugarModule::get($module_name)->loadBean();
-                    elseif (function_exists('loadBean')) $bean = loadBean($module_name);
-
-                    if ($bean instanceof SugarBean)
+                    switch ($module_name)
                     {
-                        $table_names[$module_name] = $bean->getTableName();
-                    }
-                    else
-                    {
-                        throw new Exception("Unable to load Bean: $module_name");
+                        case 'Employees':
+                            return 'users';
+                        default:
+                            return strtolower($module_name);
                     }
                 }
             }
         }
-        $depth--;
-        return isset($table_names[$module_name]) ? $table_names[$module_name] : null;
+
+        if (empty($table_names[$module_name])) throw new Exception("Missing table name for module $module_name");
+
+        return $table_names[$module_name];
     }
 
     /**
@@ -792,6 +789,10 @@ class VardefModifier
     private function getTableName()
     {
         $this->table_name = self::_getTableName($this->module_name, $this->dictionary);
+
+        if (empty($this->table_name)) throw new Exception();
+
+        var_dump($this->table_name);
         return $this->table_name;
     }
 
