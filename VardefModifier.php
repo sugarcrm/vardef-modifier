@@ -792,7 +792,6 @@ class VardefModifier
 
         if (empty($this->table_name)) throw new Exception();
 
-        var_dump($this->table_name);
         return $this->table_name;
     }
 
