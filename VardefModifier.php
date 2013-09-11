@@ -144,38 +144,57 @@ class VardefModifier
      */
     private static function _getTableName($module_name, array $dictionary)
     {
-        static $table_names = array ();
+        $object_name = self::getObjectName($module_name);
 
-        if (empty($table_names[$module_name]))
+        if (!empty($dictionary[$object_name]['table']))
         {
-            $object_name = self::getObjectName($module_name);
+            return $dictionary[$object_name]['table'];
+        }
+        else
+        {
+            global $dictionary;
             if (!empty($dictionary[$object_name]['table']))
             {
-                $table_names[$module_name] = $dictionary[$object_name]['table'];
+                return $dictionary[$object_name]['table'];
             }
             else
             {
-                global $dictionary;
-                if (!empty($dictionary[$object_name]['table']))
+                global $beanFiles;
+                $bean_name = self::getObjectName($module_name);
+
+                if (isset($beanFiles[$bean_name]))
                 {
-                    $table_names[$module_name] = $dictionary[$object_name]['table'];
+                    require_once $beanFiles[$bean_name];
+
+                    if (!class_exists($bean_name))
+                    {
+                        require_once __DIR__ . '/VardefModifier/Exception/UnsupportedModule.php';
+                        throw new VardefModifier_Exception_UnsupportedModule($module_name);
+                    }
+
+                    $refl = new ReflectionClass($bean_name);
+                    $props = $refl->getDefaultProperties();
+
+                    if (!empty($props['table_name']))
+                    {
+                        return $props['table_name'];
+                    }
+                    else
+                    {
+                        require_once __DIR__ . '/VardefModifier/Exception/UnsupportedModule.php';
+                        throw new VardefModifier_Exception_UnsupportedModule($module_name);
+                    }
                 }
                 else
                 {
-                    switch ($module_name)
-                    {
-                        case 'Employees':
-                            return 'users';
-                        default:
-                            return strtolower($module_name);
-                    }
+                    require_once __DIR__ . '/VardefModifier/Exception/UnsupportedModule.php';
+                    throw new VardefModifier_Exception_UnsupportedModule($module_name);
                 }
             }
         }
 
-        if (empty($table_names[$module_name])) throw new Exception("Missing table name for module $module_name");
-
-        return $table_names[$module_name];
+        require_once __DIR__ . '/VardefModifier/Exception/MissingTableName.php';
+        throw new VardefModifier_Exception_MissingTableName($module_name);
     }
 
     /**
