@@ -131,10 +131,13 @@ class VardefModifier
     private static function getObjectName($module_name)
     {
         global $beanList;
+
         if (!isset($beanList[$module_name]))
         {
-            throw new VardefModifier_Exception("Invalid Module Name: $module_name");
+            require_once __DIR__ . '/VardefModifier/Exception/UnsupportedModule.php';
+            throw new VardefModifier_Exception_UnsupportedModule("$module_name");
         }
+
         return $beanList[$module_name];
     }
 
@@ -266,8 +269,10 @@ class VardefModifier
     {
         if (!file_exists($file))
         {
-            throw new VardefModifier_Exception("Can't find file: $file");
+            require_once __DIR__ . '/VardefModifier/Exception/InvalidFilePath.php';
+            throw new VardefModifier_Exception_InvalidFilePath($file);
         }
+
         return $this->def(Spyc::YAMLLoad($file));
     }
 
@@ -301,7 +306,8 @@ class VardefModifier
         }
         if (!empty($def))
         {
-            throw new VardefModifier_Exception(
+            require_once __DIR__ . '/VardefModifier/Exception/InvalidDefinitionFormat.php';
+            throw new VardefModifier_Exception_InvalidDefinitionFormat(
                 'Invalid key(s): ' . implode(', ', array_keys($def))
             );
         }
@@ -325,7 +331,11 @@ class VardefModifier
         foreach ($keys as $key => $fields)
         {
             if (!is_array($fields))
-                throw new VardefModifier_Exception("Invalid Array Formatting");
+            {
+                require_once __DIR__ . '/VardefModifier/Exception/InvalidDefinitionFormat.php';
+                throw new VardefModifier_Exception_InvalidDefinitionFormat("\$fields must be array");
+            }
+
             switch ($key)
             {
                 case 'fields':
@@ -338,9 +348,11 @@ class VardefModifier
                     $this->addRelationships($fields);
                     break;
                 default:
-                    throw new VardefModifier_Exception("Invalid key: $key");
+                    require_once __DIR__ . '/VardefModifier/Exception/InvalidDefinitionFormat.php';
+                    throw new VardefModifier_Exception_InvalidDefinitionFormat("$key is not supported, only fields, indices and relationships");
             }
         }
+
         return $this;
     }
 
@@ -383,7 +395,8 @@ class VardefModifier
 
         if (!is_array($settings))
         {
-            throw new VardefModifier_Exception("Invalid type of settings");
+            require_once __DIR__ . '/VardefModifier/Exception/InvalidDefinitionFormat.php';
+            throw new VardefModifier_Exception_InvalidDefinitionFormat("\$settings must be array");
         }
 
         $fields = (array) $fields;
@@ -685,7 +698,8 @@ class VardefModifier
             }
             else
             {
-                throw new Exception("Not Implemented");
+                require_once __DIR__ . '/VardefModifier/Exception/InvalidDefinitionFormat.php';
+                throw new VardefModifier_Exception_InvalidDefinitionFormat("Not Implemented");
             }
         }
         return $this;
@@ -702,7 +716,8 @@ class VardefModifier
     {
         if (!is_string($name) || empty($name))
         {
-            throw new VardefModifier_Exception("Invalid type of name");
+            require_once __DIR__ . '/VardefModifier/Exception/InvalidDefinitionFormat.php';
+            throw new VardefModifier_Exception_InvalidDefinitionFormat("Invalid type of name");
         }
         switch ($type)
         {
@@ -740,7 +755,8 @@ class VardefModifier
                 }
                 else
                 {
-                    throw new VardefModifier_Exception("Invalid Type: $type");
+                    require_once __DIR__ . '/VardefModifier/Exception/InvalidDefinitionFormat.php';
+                    throw new VardefModifier_Exception_InvalidDefinitionFormat("Invalid field type: '$type'");
                 }
         }
         return $this;
@@ -809,7 +825,11 @@ class VardefModifier
     {
         $this->table_name = self::_getTableName($this->module_name, $this->dictionary);
 
-        if (empty($this->table_name)) throw new Exception();
+        if (empty($this->table_name))
+        {
+            require_once __DIR__ . '/VardefModifier/Exception/MissingTableName.php';
+            throw new VardefModifier_Exception_MissingTableName($this->module_name);
+        }
 
         return $this->table_name;
     }
@@ -822,7 +842,8 @@ class VardefModifier
     {
         if (!isset($this->defaults[$type]))
         {
-            throw new VardefModifier_Exception("Invalid default type: $type");
+            require_once __DIR__ . '/VardefModifier/Exception/UnsupportedDefaultsType.php';
+            throw new VardefModifier_Exception_UnsupportedDefaultsType($type);
         }
         return $this->defaults[$type];
     }
@@ -845,8 +866,10 @@ class VardefModifier
     {
         if (!isset($this->defaults[$name]))
         {
-            throw new VardefModifier_Exception("Invalid Field Default: $name");
+            require_once __DIR__ . '/VardefModifier/Exception/UnsupportedDefaultsType.php';
+            throw new VardefModifier_Exception_UnsupportedDefaultsType($name);
         }
+
         $this->defaults[$name] = array_merge($this->defaults[$name], $field_default);
     }
 
@@ -871,8 +894,10 @@ class VardefModifier
     {
         if (!isset($settings['module']))
         {
-            throw new VardefModifier_Exception("Missing module");
+            require_once __DIR__ . '/VardefModifier/Exception/InvalidDefinitionFormat.php';
+            throw new VardefModifier_Exception_InvalidDefinitionFormat("Missing module");
         }
+
         $default = array (
             'rname' => $name,
             'table' => self::_getTableName($settings['module'], $this->dictionary),
