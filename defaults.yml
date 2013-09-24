@@ -22,7 +22,7 @@ date:
     type: date
     enable_range_search: true
     options: date_range_search_dom
-decimal: { type: decimal, len: "26,6" }
+decimal: { type: decimal, len: "26,6", options: numeric_range_search_dom, enable_range_search: true }
 image: { type: image, dbType: varchar, height: 100 }
 datetimecombo:
     type: datetimecombo
@@ -32,7 +32,7 @@ datetimecombo:
 url: { type: url, dbType: varchar }
 datetime: { type: datetime }
 bool: { type: bool }
-float: { type: float }
+float: { type: float, options: numeric_range_search_dom, enable_range_search: true }
 phone: { type: phone, dbType: varchar, len: 100 }
 id: { type: id }
 currency:
