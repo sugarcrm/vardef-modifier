@@ -41,6 +41,12 @@ currency:
     dbType: double
     enable_range_search: true
     options: numeric_range_search_dom
+currency_base:
+    len: "11,2"
+    type: currency
+    dbType: double
+    enable_range_search: true
+    options: numeric_range_search_dom
 enum: { type: enum }
 multienum: { type: multienum, isMultiSelect: true }
 relate: { source: non-db, type: relate }
