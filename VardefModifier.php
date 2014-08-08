@@ -6,6 +6,7 @@ if (!class_exists('Spyc'))
 }
 
 require_once dirname(__FILE__) . '/VardefModifier/Exception.php';
+require_once dirname(__FILE__) . '/VardefModifier/Version.php';
 
 class VardefModifier_RecursiveException extends Exception
 {
@@ -232,6 +233,7 @@ class VardefModifier
     public function __construct($module_name, array $dictionary)
     {
         self::loadDefaults();
+        $this->version = new VardefModifier_Version();
         $this->module_name = $module_name;
         $this->object_name = self::getObjectName($this->module_name);
         $this->dictionary = $dictionary;
@@ -779,33 +781,84 @@ class VardefModifier
     {
         if (!$this->hasField('currency_id'))
         {
-            $this->addRelationship('Currencies', array (
-                'id' => array (
-                    'type' => 'currency_id',
-                    'dbType' => 'id',
-                    'group' => 'currency_id',
-                    'default' => '-99',
-                    'function' => array (
-                        'name' => 'getCurrencyDropDown',
-                        'returns' => 'html'
-                    ),
-                ),
-                'name' => array (
-                    'function' => array (
-                        'name' => 'getCurrencyNameDropDown',
-                        'returns' => 'html',
+            if ($this->version->getMajorVersion() < 7) {
+                $this->addRelationship(
+                    'Currencies',
+                    array (
+                        'id' => array (
+                            'type' => 'currency_id',
+                            'dbType' => 'id',
+                            'group' => 'currency_id',
+                            'default' => '-99',
+                            'function' => array (
+                                'name' => 'getCurrencyDropDown',
+                                'returns' => 'html'
+                            ),
+                        ),
+                        'name' => array (
+                            'function' => array (
+                                'name' => 'getCurrencyNameDropDown',
+                                'returns' => 'html',
+                            )
+                        )
                     )
-                )
-            ));
-            $this->addRelate('currency_symbol', array (
-                'module' => 'Currencies',
-                'rname' => 'symbol',
-                'function' => array (
-                    'name' => 'getCurrencySymbolDropDown',
-                    'returns' => 'html',
-                )
+                );
+
+                $this->addRelate('currency_symbol',
+                    array (
+                        'module' => 'Currencies',
+                        'rname' => 'symbol',
+                        'function' => array (
+                            'name' => 'getCurrencySymbolDropDown',
+                            'returns' => 'html',
+                        )
+                    )
+                );
+            } else {
+                $this->addRelationship(
+                    'Currencies',
+                    array (
+                        'id' => array (
+                            'type' => 'currency_id',
+                            'dbType' => 'id',
+                            'group' => 'currency_id',
+                            'vname' => 'LBL_CURRENCY',
+                            'function' => 'getCurrencies',
+                            'function_bean' => 'Currencies',
+                            'reportable' => false,
+                            'default' => '-99',
+                        ),
+                        'name' => array (
+                            'function' => 'getCurrencies',
+                            'function_bean' => 'Currencies',
+                            'studio' => false,
+                        )
+                    )
+                );
+
+                $this->addRelate('currency_symbol',
+                    array (
+                        'module' => 'Currencies',
+                        'rname' => 'symbol',
+                        'function' => 'getCurrencySymbols',
+                        'function_bean' => 'Currencies',
+                        'studio' => false,
+                    )
+                );
+            }
+        }
+
+        if ($this->version->getMajorVersion() >= 7 && !$this->hasField('base_rate'))
+        {
+            $this->addField("base_rate", "decimal", array(
+                'name' => 'base_rate',
+                'vname' => 'LBL_CURRENCY_RATE',
+                'type' => 'decimal',
+                'len' => '26,6',
+                'studio' => false,
             ));
         }
+
         return $this;
     }
 
@@ -940,10 +993,34 @@ class VardefModifier
     private function addCurrency($name, array $settings = array ())
     {
         $template = $this->getDefault('currency');
+
+        $baseSettings = $settings;
+        $baseTemplate = $this->getDefault('currency_base');
+
+        $baseSettings['group'] = $name;
+        if (!empty($baseSettings['required'])) {
+            $baseSettings['required'] = false;
+        }
+
+        if ($this->version->getMajorVersion() >= 7) {
+            $template['convertToBase'] = true;
+            $template['showTransactionalAmount'] = true;
+            $template['validation'] = array ('type' => 'range', 'min' => 0);
+            $template['related_fields'] = array ('currency_id', 'base_rate');
+
+            $baseTemplate['readonly'] = true;
+            $baseTemplate['is_base_currency'] = true;
+            $baseTemplate['related_fields'] = array ('currency_id', 'base_rate');
+
+            $baseSettings['calculated'] = true;
+            $baseSettings['enforced'] = true;
+            $baseSettings['formula'] = "divide(\$$name,\$base_rate)";
+        }
+
         return $this->
                 addCurrencyRelation()->
                 addDefaultField($name, $template, $settings)->
-                addDefaultField($name . '_usdollar', $template, array ('group' => $name), $settings);
+                addDefaultField($name . '_usdollar', $baseTemplate, $baseSettings);
     }
 
     /**
