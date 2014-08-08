@@ -6,6 +6,7 @@ if (!class_exists('Spyc'))
 }
 
 require_once dirname(__FILE__) . '/VardefModifier/Exception.php';
+require_once dirname(__FILE__) . '/VardefModifier/Version.php';
 
 class VardefModifier_RecursiveException extends Exception
 {
@@ -232,6 +233,7 @@ class VardefModifier
     public function __construct($module_name, array $dictionary)
     {
         self::loadDefaults();
+        $this->version = new VardefModifier_Version();
         $this->module_name = $module_name;
         $this->object_name = self::getObjectName($this->module_name);
         $this->dictionary = $dictionary;
