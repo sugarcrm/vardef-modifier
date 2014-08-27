@@ -712,6 +712,8 @@ class VardefModifier
      * @param string $name
      * @param string $type
      * @param array $settings
+     *
+     * @throws VardefModifier_Exception_InvalidDefinitionFormat
      * @return \VardefModifier
      */
     public function addField($name, $type, array $settings = array ())
@@ -723,6 +725,10 @@ class VardefModifier
         }
         switch ($type)
         {
+            case 'int':
+            case 'integer':
+                $this->addInt($name, $settings);
+                break;
             case 'enum':
                 $this->addEnum($name, $settings);
                 break;
@@ -1078,6 +1084,28 @@ class VardefModifier
     private function addMultienum($name, array $settings = array ())
     {
         return $this->addEnumLike($name, $this->getDefault('multienum'), $settings);
+    }
+
+    /**
+     * @param string $name
+     * @param array $settings
+     * @return \VardefModifier
+     */
+    public function addInt($name, array $settings)
+    {
+        $default = $this->getDefault('int');
+
+        if (!empty($settings['auto_increment'])) {
+            $default['readonly'] = true;
+            $indexSettings = !empty($settings['index']) ? $settings['index'] : array ();
+            $this->addIndex($name, $indexSettings);
+        }
+
+        return $this->addDefaultField(
+            $name,
+            $default,
+            $settings
+        );
     }
 
     /**
