@@ -47,6 +47,7 @@ currency_base:
     dbType: double
     enable_range_search: true
     options: numeric_range_search_dom
+    studio: false
 enum: { type: enum }
 multienum: { type: multienum, isMultiSelect: true }
 relate: { source: non-db, type: relate }
