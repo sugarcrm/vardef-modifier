@@ -939,9 +939,13 @@ class VardefModifier
      */
     private function addName($name, array $settings)
     {
-        return $this->addRelate($name, array_merge(
-            $this->getDefault('name'), $settings
-        ));
+        $default = $this->getDefault('name');
+
+        if ($this->version->getMajorVersion() >= 7) {
+            $default['sort_on'] = $default['rname'];
+        }
+
+        return $this->addRelate($name, self::merge($default, $settings));
     }
 
     /**
@@ -962,8 +966,15 @@ class VardefModifier
             'table' => self::_getTableName($settings['module'], $this->dictionary),
             'id_name' => strtolower(self::getObjectName($settings['module'])) . '_id',
         );
+
+        $default = self::merge($this->getDefault('relate'), $default);
+
+        if ($this->version->getMajorVersion() >= 7) {
+            $default['sort_on'] = $default['rname'];
+        }
+
         return $this->addDefaultField(
-            $name, $this->getDefault('relate'), $default, $settings
+            $name, $default, $settings
         );
     }
 
