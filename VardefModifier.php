@@ -862,6 +862,7 @@ class VardefModifier
                 'type' => 'decimal',
                 'len' => '26,6',
                 'studio' => false,
+                'default' => 1,
             ));
         }
 
