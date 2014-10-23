@@ -349,6 +349,9 @@ class VardefModifier
                 case 'relationships':
                     $this->addRelationships($fields);
                     break;
+                case 'duplicate_check':
+                    $this->addDuplicateCheck($fields);
+                    break;
                 default:
                     require_once __DIR__ . '/VardefModifier/Exception/InvalidDefinitionFormat.php';
                     throw new VardefModifier_Exception_InvalidDefinitionFormat("$key is not supported, only fields, indices and relationships");
@@ -768,6 +771,14 @@ class VardefModifier
                 }
         }
         return $this;
+    }
+
+    /**
+     * @param array $def
+     */
+    public function addDuplicateCheck(array $def)
+    {
+        $this->vardef['duplicate_check'] = $def;
     }
 
     /**
