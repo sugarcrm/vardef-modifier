@@ -296,23 +296,28 @@ class VardefModifier
      */
     public function def(array $def)
     {
-        static $keys = array ('defaults', 'add', 'change', 'remove');
-        // These methods needs to be executed to the correct order
-        foreach ($keys as $key)
-        {
-            if (isset($def[$key]))
+        try {
+            static $keys = array ('defaults', 'add', 'change', 'remove');
+            // These methods needs to be executed to the correct order
+            foreach ($keys as $key)
             {
-                $this->$key($def[$key]);
-                unset($def[$key]);
+                if (isset($def[$key]))
+                {
+                    $this->$key($def[$key]);
+                    unset($def[$key]);
+                }
             }
+            if (!empty($def))
+            {
+                require_once __DIR__ . '/VardefModifier/Exception/InvalidDefinitionFormat.php';
+                throw new VardefModifier_Exception_InvalidDefinitionFormat(
+                    'Invalid key(s): ' . implode(', ', array_keys($def))
+                );
+            }
+        } catch (VardefModifier_Exception $e) {
+            echo "$e\n";
         }
-        if (!empty($def))
-        {
-            require_once __DIR__ . '/VardefModifier/Exception/InvalidDefinitionFormat.php';
-            throw new VardefModifier_Exception_InvalidDefinitionFormat(
-                'Invalid key(s): ' . implode(', ', array_keys($def))
-            );
-        }
+
         return $this;
     }
 
