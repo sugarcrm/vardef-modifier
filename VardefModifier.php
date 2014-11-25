@@ -998,21 +998,30 @@ class VardefModifier
     /**
      * @param string $name
      * @param array $settings
+     *
+     * @return $this
      */
     private function addAddress($name, array $settings = array ())
     {
         $defaults = self::merge($this->getDefault('address'), $settings);
+
         $all = $defaults['all'];
+
         unset($defaults['all']);
-        if (empty($all['group']))
-            $all['group'] = $name . '_address';
-        foreach ($defaults as $field_name => $field_settings)
-        {
-            if (is_array($field_settings))
-            {
+
+        if (empty($all['group'])) {
+            if ($name === "address") {
+                $all['group'] = $name;
+            } else {
+                $all['group'] = $name . '_address';
+            }
+        }
+
+        foreach ($defaults as $field_name => $field_settings) {
+            if (is_array($field_settings)) {
                 $field_settings = self::merge($all, $field_settings);
                 $this->addField(
-                    $name . '_address_' . $field_name, $field_settings['type'], $field_settings
+                    $all['group'] . "_" . $field_name, $field_settings['type'], $field_settings
                 );
             }
         }
