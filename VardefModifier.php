@@ -523,6 +523,13 @@ class VardefModifier
             unset($settings["options"]);
         }
 
+        if (isset($settings["required"])) {
+            $settings["id"]["required"] = $settings["required"];
+            $settings["name"]["required"] = $settings["required"];
+            $settings["type"]["required"] = $settings["required"];
+            unset($settings["required"]);
+        }
+
         $this->addField($id_name, 'id', $defaults['id']);
         $this->addField($name_name, 'varchar', $defaults['name']);
         $this->addField($type_name, 'varchar', $defaults['type']);
