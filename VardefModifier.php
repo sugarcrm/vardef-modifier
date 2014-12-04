@@ -499,23 +499,12 @@ class VardefModifier
     }
 
     /**
-     * @param string $name
+     * @param string $prefix
      * @param array $settings
      * @return \VardefModifier
      */
     private function addFlexRelate($prefix, $settings = array ())
     {
-        $settings = self::merge(
-            $this->getDefault('flex_relate'), $settings
-        );
-
-        $id_name = $prefix . '_id';
-        $name_name = $prefix . '_name';
-        $type_name = $prefix . '_type';
-
-        $settings['name']['id_name'] = $id_name;
-        $settings['name']['type_name'] = $type_name;
-
         if (isset($settings["options"])) {
             $settings["name"]["options"] = $settings["options"];
             $settings["name"]["parent_type"] = $settings["options"];
@@ -529,6 +518,17 @@ class VardefModifier
             $settings["type"]["required"] = $settings["required"];
             unset($settings["required"]);
         }
+
+        $id_name = $prefix . '_id';
+        $name_name = $prefix . '_name';
+        $type_name = $prefix . '_type';
+
+        $settings['name']['id_name'] = $id_name;
+        $settings['name']['type_name'] = $type_name;
+
+        $settings = self::merge(
+            $this->getDefault('flex_relate'), $settings
+        );
 
         $this->addField($id_name, 'id', $settings['id']);
         $this->addField($name_name, 'varchar', $settings['name']);
@@ -1017,7 +1017,10 @@ class VardefModifier
      */
     private function addAddress($name, array $settings = array ())
     {
-        $defaults = self::merge($this->getDefault('address'), $settings);
+        $defaults = self::merge(
+            $this->getDefault('address'),
+            $settings
+        );
 
         $all = $defaults['all'];
 
