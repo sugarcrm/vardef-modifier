@@ -505,7 +505,7 @@ class VardefModifier
      */
     private function addFlexRelate($prefix, $settings = array ())
     {
-        $defaults = self::merge(
+        $settings = self::merge(
             $this->getDefault('flex_relate'), $settings
         );
 
@@ -513,8 +513,8 @@ class VardefModifier
         $name_name = $prefix . '_name';
         $type_name = $prefix . '_type';
 
-        $defaults['name']['id_name'] = $id_name;
-        $defaults['name']['type_name'] = $type_name;
+        $settings['name']['id_name'] = $id_name;
+        $settings['name']['type_name'] = $type_name;
 
         if (isset($settings["options"])) {
             $settings["name"]["options"] = $settings["options"];
@@ -530,9 +530,9 @@ class VardefModifier
             unset($settings["required"]);
         }
 
-        $this->addField($id_name, 'id', $defaults['id']);
-        $this->addField($name_name, 'varchar', $defaults['name']);
-        $this->addField($type_name, 'varchar', $defaults['type']);
+        $this->addField($id_name, 'id', $settings['id']);
+        $this->addField($name_name, 'varchar', $settings['name']);
+        $this->addField($type_name, 'varchar', $settings['type']);
         $this->addIndex($id_name);
 
         return $this;
