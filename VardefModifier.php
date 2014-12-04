@@ -516,6 +516,13 @@ class VardefModifier
         $defaults['name']['id_name'] = $id_name;
         $defaults['name']['type_name'] = $type_name;
 
+        if (isset($settings["options"])) {
+            $settings["name"]["options"] = $settings["options"];
+            $settings["name"]["parent_type"] = $settings["options"];
+            $settings["type"]["parent_type"] = $settings["options"];
+            unset($settings["options"]);
+        }
+
         $this->addField($id_name, 'id', $defaults['id']);
         $this->addField($name_name, 'varchar', $defaults['name']);
         $this->addField($type_name, 'varchar', $defaults['type']);
