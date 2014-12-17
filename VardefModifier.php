@@ -414,6 +414,16 @@ class VardefModifier
         $index = array_merge($this->getDefault('index'), $default, $settings);
         $index = array_merge(array ('name' => 'idx_' . implode('_', $index['fields'])), $index);
         $this->vardef['indices'][$index['name']] = $index;
+
+        // Provides support in the import module to do a duplicate check on the unique fields.
+        if ($index["type"] === "unique") {
+            $this->addIndex($fields, array (
+                "type" => "index",
+                "source" => "non-db",
+                "name" => $index["name"] . "_dup_check"
+            ));
+        }
+        
         return $this;
     }
 
