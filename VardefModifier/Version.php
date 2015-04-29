@@ -5,7 +5,6 @@
  */
 class VardefModifier_Version
 {
-
     /**
      * @var int
      */
@@ -27,6 +26,7 @@ class VardefModifier_Version
     public function getMajorVersion()
     {
         $this->set();
+
         return $this->majorVersion;
     }
 
@@ -36,6 +36,7 @@ class VardefModifier_Version
     public function getMinorVersion()
     {
         $this->set();
+
         return $this->minorVersion;
     }
 
@@ -45,6 +46,7 @@ class VardefModifier_Version
     public function getMaintenanceVersion()
     {
         $this->set();
+
         return $this->maintenanceVersion;
     }
 
@@ -59,11 +61,10 @@ class VardefModifier_Version
             return;
         }
 
-        $numbers = explode(".", $sugar_version);
+        $numbers = explode('.', $sugar_version);
 
         $this->majorVersion = !empty($numbers[0]) ? (int) $numbers[0] : 0;
         $this->minorVersion = !empty($numbers[1]) ? (int) $numbers[1] : 0;
         $this->maintenanceVersion = !empty($numbers[2]) ? (int) $numbers[2] : 0;
     }
-
 }
