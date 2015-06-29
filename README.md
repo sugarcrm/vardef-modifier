@@ -15,7 +15,7 @@ Installation
 
 # Install in project
 
-git submodule add gitolite@git.scm.dri.pt:nordic/VardefModifier docroot/custom/include/VardefModifier
+git submodule add gitolite@gitlab.dri-nordic.com:dri-nordic/vardef-modifier docroot/custom/include/VardefModifier
 
 # Install in module
 
