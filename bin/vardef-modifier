@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+require_once "vendor/autoload.php";
+
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Application;
+
+use DRI\SugarCRM\VardefModifier\Command;
+
+$input = new ArgvInput($argv);
+
+$application = new Application();
+
+$application->addCommands(array (
+    new Command\DumpCommand(),
+    new Command\InstallCommand(),
+    new Command\MigrateCommand(),
+));
+
+$application->run($input);

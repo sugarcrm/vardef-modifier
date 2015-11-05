@@ -1,11 +1,13 @@
 <?php
 
-require_once dirname(__DIR__).'/Exception.php';
+namespace DRI\SugarCRM\VardefModifier\Exception;
+
+use DRI\SugarCRM\VardefModifier\Exception;
 
 /**
  * @author Emil Kilhage
  */
-class VardefModifier_Exception_InvalidDefinitionFormat extends VardefModifier_Exception
+class InvalidDefinitionFormat extends Exception
 {
     public function __construct($message = '')
     {

@@ -1,0 +1,37 @@
+{
+    "name": "dri-nordic/vardef-modifier",
+    "type": "library",
+    "license": "MIT",
+    "description": "",
+    "authors": [
+        {
+            "name": "Emil Kilhage",
+            "email": "emil.kilhage@dri-nordic.com"
+        }
+    ],
+    "require": {
+        "symfony/console": "~2.4",
+        "symfony/yaml": "~2.7",
+        "dri-nordic/sugarcrm-bootstrap": "~0.1"
+    },
+    "bin": [
+        "bin/vardef-modifier"
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url":  "https://packages.dricrm.com/"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "DRI\\SugarCRM\\VardefModifier\\": "src/",
+            "DRI\\SugarCRM\\VardefModifier\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        }
+    }
+}

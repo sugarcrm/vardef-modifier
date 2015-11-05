@@ -1,25 +1,12 @@
 <?php
 
-if (!class_exists('Spyc')) {
-    require_once dirname(__FILE__).'/spyc.php';
-}
+namespace DRI\SugarCRM\VardefModifier;
 
-require_once dirname(__FILE__).'/VardefModifier/Exception.php';
-require_once dirname(__FILE__).'/VardefModifier/Version.php';
-
-class VardefModifier_RecursiveException extends Exception
-{
-    public $table_name;
-
-    public function __construct($table_name)
-    {
-        $this->table_name = $table_name;
-        parent::__construct();
-    }
-}
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Yaml;
 
 /**
- * Simplifes modifications of SugarCrm vardef definitions.
+ * Simplifies modifications of SugarCRM vardef definitions.
  *
  * @author Emil Kilhage
  */
@@ -47,6 +34,7 @@ class VardefModifier
      * @param array  $dictionary
      *
      * @return VardefModifier
+     * @throws Exception
      */
     public static function modify($module_name, array $dictionary)
     {
@@ -56,13 +44,14 @@ class VardefModifier
     /**
      * @return array
      *
-     * @throws VardefModifier_Exception
+     * @throws Exception
+     * @throws ParseException
      */
     private static function loadDefaults()
     {
         if (!isset(self::$_defaults)) {
-            $file = dirname(__FILE__).'/defaults.yml';
-            self::$_defaults = spyc_load_file($file);
+            $file = dirname(__DIR__).'/defaults.yml';
+            self::$_defaults = Yaml::parse($file);
         }
     }
 
@@ -117,15 +106,14 @@ class VardefModifier
      *
      * @return string
      *
-     * @throws VardefModifier_Exception
+     * @throws Exception
      */
     private static function getObjectName($module_name)
     {
         global $beanList;
 
         if (!isset($beanList[$module_name])) {
-            require_once __DIR__.'/VardefModifier/Exception/UnsupportedModule.php';
-            throw new VardefModifier_Exception_UnsupportedModule("$module_name");
+            throw new Exception\UnsupportedModule("$module_name");
         }
 
         return $beanList[$module_name];
@@ -134,7 +122,9 @@ class VardefModifier
     /**
      * @param string $module_name
      *
+     * @param array $dictionary
      * @return string
+     * @throws Exception
      */
     private static function _getTableName($module_name, array $dictionary)
     {
@@ -143,9 +133,8 @@ class VardefModifier
         if (!empty($dictionary[$object_name]['table'])) {
             return $dictionary[$object_name]['table'];
         } else {
-            global $dictionary;
-            if (!empty($dictionary[$object_name]['table'])) {
-                return $dictionary[$object_name]['table'];
+            if (!empty($GLOBALS['dictionary'][$object_name]['table'])) {
+                return $GLOBALS['dictionary'][$object_name]['table'];
             } else {
                 global $beanFiles;
                 $bean_name = self::getObjectName($module_name);
@@ -154,28 +143,22 @@ class VardefModifier
                     require_once $beanFiles[$bean_name];
 
                     if (!class_exists($bean_name)) {
-                        require_once __DIR__.'/VardefModifier/Exception/UnsupportedModule.php';
-                        throw new VardefModifier_Exception_UnsupportedModule($module_name);
+                        throw new Exception\UnsupportedModule($module_name);
                     }
 
-                    $refl = new ReflectionClass($bean_name);
+                    $refl = new \ReflectionClass($bean_name);
                     $props = $refl->getDefaultProperties();
 
                     if (!empty($props['table_name'])) {
                         return $props['table_name'];
                     } else {
-                        require_once __DIR__.'/VardefModifier/Exception/UnsupportedModule.php';
-                        throw new VardefModifier_Exception_UnsupportedModule($module_name);
+                        throw new Exception\UnsupportedModule($module_name);
                     }
                 } else {
-                    require_once __DIR__.'/VardefModifier/Exception/UnsupportedModule.php';
-                    throw new VardefModifier_Exception_UnsupportedModule($module_name);
+                    throw new Exception\UnsupportedModule($module_name);
                 }
             }
         }
-
-        require_once __DIR__.'/VardefModifier/Exception/MissingTableName.php';
-        throw new VardefModifier_Exception_MissingTableName($module_name);
     }
 
     /**
@@ -206,11 +189,13 @@ class VardefModifier
     /**
      * @param string $module_name
      * @param array  $dictionary
+     * @throws Exception
      */
     public function __construct($module_name, array $dictionary)
     {
         self::loadDefaults();
-        $this->version = new VardefModifier_Version();
+
+        $this->version = new Version();
         $this->module_name = $module_name;
         $this->object_name = self::getObjectName($this->module_name);
         $this->dictionary = $dictionary;
@@ -240,18 +225,21 @@ class VardefModifier
     /**
      * @param string $file
      *
-     * @return \VardefModifier
+     * @return VardefModifier
      *
-     * @throws VardefModifier_Exception
+     * @throws Exception
+     * @throws Exception\InvalidFilePath
+     * @throws ParseException
      */
     public function yaml($file)
     {
         if (!file_exists($file)) {
-            require_once __DIR__.'/VardefModifier/Exception/InvalidFilePath.php';
-            throw new VardefModifier_Exception_InvalidFilePath($file);
+            throw new Exception\InvalidFilePath($file);
         }
 
-        return $this->def(Spyc::YAMLLoad($file));
+        $def = Yaml::parse($file);
+
+        return $this->def($def);
     }
 
     /**
@@ -268,9 +256,9 @@ class VardefModifier
      *
      * @param array $def
      *
-     * @return \VardefModifier
+     * @return VardefModifier
      *
-     * @throws VardefModifier_Exception
+     * @throws Exception
      */
     public function def(array $def)
     {
@@ -283,13 +271,13 @@ class VardefModifier
                     unset($def[$key]);
                 }
             }
+
             if (!empty($def)) {
-                require_once __DIR__.'/VardefModifier/Exception/InvalidDefinitionFormat.php';
-                throw new VardefModifier_Exception_InvalidDefinitionFormat(
+                throw new Exception\InvalidDefinitionFormat(
                     'Invalid key(s): '.implode(', ', array_keys($def))
                 );
             }
-        } catch (VardefModifier_Exception $e) {
+        } catch (Exception $e) {
             echo "$e\n";
         }
 
@@ -305,16 +293,15 @@ class VardefModifier
      *   - indices:       see VardefModifier::addIndices
      *   - relationships: see VardefModifier::addRelationships
      *
-     * @param array $fields
-     *
+     * @param array $keys
      * @return VardefModifier
+     * @throws Exception
      */
     public function add(array $keys)
     {
         foreach ($keys as $key => $fields) {
             if (!is_array($fields)) {
-                require_once __DIR__.'/VardefModifier/Exception/InvalidDefinitionFormat.php';
-                throw new VardefModifier_Exception_InvalidDefinitionFormat("\$fields must be array");
+                throw new Exception\InvalidDefinitionFormat("\$fields must be array");
             }
 
             switch ($key) {
@@ -331,8 +318,7 @@ class VardefModifier
                     $this->addDuplicateCheck($fields);
                     break;
                 default:
-                    require_once __DIR__.'/VardefModifier/Exception/InvalidDefinitionFormat.php';
-                    throw new VardefModifier_Exception_InvalidDefinitionFormat("$key is not supported, only fields, indices and relationships");
+                    throw new Exception\InvalidDefinitionFormat("$key is not supported, only fields, indices and relationships");
             }
         }
 
@@ -342,11 +328,10 @@ class VardefModifier
     /**
      * Adds many indices to the vardef from a array definition.
      *
-     * @todo
-     *
      * @param array $indices
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     public function addIndices(array $indices)
     {
@@ -367,9 +352,10 @@ class VardefModifier
     /**
      * Adds a index to the vardef.
      *
-     * @todo
-     *
-     * @return \VardefModifier
+     * @param array|string $fields
+     * @param array|string $settings
+     * @return VardefModifier
+     * @throws Exception
      */
     public function addIndex($fields, $settings = array())
     {
@@ -378,8 +364,7 @@ class VardefModifier
         }
 
         if (!is_array($settings)) {
-            require_once __DIR__.'/VardefModifier/Exception/InvalidDefinitionFormat.php';
-            throw new VardefModifier_Exception_InvalidDefinitionFormat("\$settings must be array");
+            throw new Exception\InvalidDefinitionFormat("\$settings must be array");
         }
 
         $fields = (array) $fields;
@@ -405,7 +390,8 @@ class VardefModifier
      *
      * @param array $relationships
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     public function addRelationships(array $relationships)
     {
@@ -423,13 +409,15 @@ class VardefModifier
     /**
      * @param array $settings
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     private function addActivityRelationship(array $settings)
     {
         $defaults = self::merge(
             $this->getDefault('Activities'), $settings
         );
+
         foreach ($defaults as $module => $settings) {
             $this->addFlexRelateLink($module, $settings);
         }
@@ -438,8 +426,11 @@ class VardefModifier
     }
 
     /**
-     * @param type  $module
-     * @param array $settings
+     * @param string  $name
+     * @param array   $settings
+     *
+     * @return VardefModifier
+     * @throws Exception
      */
     public function addFlexRelateLink($name, $settings = array())
     {
@@ -485,9 +476,10 @@ class VardefModifier
      * @param string $prefix
      * @param array  $settings
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
-    private function addFlexRelate($prefix, $settings = array())
+    private function addFlexRelate($prefix, array $settings = array())
     {
         if (isset($settings['options'])) {
             $settings['name']['options'] = $settings['options'];
@@ -525,10 +517,11 @@ class VardefModifier
     /**
      * Adds a relationship to the vardef.
      *
-     * @param string       $name:     name of the relation or the module name
-     * @param string|array $settings: module name or relationship settings
+     * @param string       $name      name of the relation or the module name
+     * @param array|string $settings  module name or relationship settings
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     public function addRelationship($name, $settings = array())
     {
@@ -628,9 +621,9 @@ class VardefModifier
     /**
      * Makes changes to the vardefs.
      *
-     * @param array $change
+     * @param array $changes
      *
-     * @return \VardefModifier
+     * @return VardefModifier
      */
     public function change(array $changes)
     {
@@ -642,9 +635,9 @@ class VardefModifier
     /**
      * Removes fields / properties this the vardef.
      *
-     * @param array $keys
+     * @param array $values
      *
-     * @return \VardefModifier
+     * @return VardefModifier
      */
     public function remove(array $values)
     {
@@ -658,9 +651,9 @@ class VardefModifier
      *
      * @param array $field_defaults
      *
-     * @return \VardefModifier
+     * @return VardefModifier
      *
-     * @throws VardefModifier_Exception
+     * @throws Exception
      */
     public function defaults(array $field_defaults)
     {
@@ -679,9 +672,11 @@ class VardefModifier
      *
      * See VardefModifier::addField for supported field types
      *
-     * @param array $fields
+     * @param array $types
+     * @return VardefModifier
+     * @throws Exception\InvalidDefinitionFormat
+     * @internal param array $fields
      *
-     * @return \VardefModifier
      */
     public function addFields(array $types)
     {
@@ -696,8 +691,7 @@ class VardefModifier
                     }
                 }
             } else {
-                require_once __DIR__.'/VardefModifier/Exception/InvalidDefinitionFormat.php';
-                throw new VardefModifier_Exception_InvalidDefinitionFormat('Not Implemented');
+                throw new Exception\InvalidDefinitionFormat('Not Implemented');
             }
         }
 
@@ -709,16 +703,17 @@ class VardefModifier
      * @param string $type
      * @param array  $settings
      *
-     * @throws VardefModifier_Exception_InvalidDefinitionFormat
+     * @throws Exception\InvalidDefinitionFormat
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     public function addField($name, $type, array $settings = array())
     {
         if (!is_string($name) || empty($name)) {
-            require_once __DIR__.'/VardefModifier/Exception/InvalidDefinitionFormat.php';
-            throw new VardefModifier_Exception_InvalidDefinitionFormat('Invalid type of name');
+            throw new Exception\InvalidDefinitionFormat('Invalid type of name');
         }
+
         switch ($type) {
             case 'int':
             case 'integer':
@@ -755,8 +750,7 @@ class VardefModifier
                 if ($this->hasDefault($type)) {
                     $this->addDefaultField($name, $this->getDefault($type), $settings);
                 } else {
-                    require_once __DIR__.'/VardefModifier/Exception/InvalidDefinitionFormat.php';
-                    throw new VardefModifier_Exception_InvalidDefinitionFormat("Invalid field type: '$type'");
+                    throw new Exception\InvalidDefinitionFormat("Invalid field type: '$type'");
                 }
         }
 
@@ -775,7 +769,7 @@ class VardefModifier
      * @param string $name
      *
      * @return bool
-     * @return \VardefModifier
+     * @return VardefModifier
      */
     public function hasField($name)
     {
@@ -783,7 +777,8 @@ class VardefModifier
     }
 
     /**
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     public function addCurrencyRelation()
     {
@@ -881,14 +876,15 @@ class VardefModifier
 
     /**
      * @return string
+     * @throws Exception\MissingTableName
+     * @throws Exception\UnsupportedModule
      */
     private function getTableName()
     {
         $this->table_name = self::_getTableName($this->module_name, $this->dictionary);
 
         if (empty($this->table_name)) {
-            require_once __DIR__.'/VardefModifier/Exception/MissingTableName.php';
-            throw new VardefModifier_Exception_MissingTableName($this->module_name);
+            throw new Exception\MissingTableName($this->module_name);
         }
 
         return $this->table_name;
@@ -896,14 +892,13 @@ class VardefModifier
 
     /**
      * @param string $type
-     *
      * @return array
+     * @throws Exception\UnsupportedDefaultsType
      */
     private function getDefault($type)
     {
         if (!isset($this->defaults[$type])) {
-            require_once __DIR__.'/VardefModifier/Exception/UnsupportedDefaultsType.php';
-            throw new VardefModifier_Exception_UnsupportedDefaultsType($type);
+            throw new Exception\UnsupportedDefaultsType($type);
         }
 
         return $this->defaults[$type];
@@ -923,13 +918,12 @@ class VardefModifier
      * @param string $name
      * @param array  $field_default
      *
-     * @throws VardefModifier_Exception
+     * @throws Exception\UnsupportedDefaultsType
      */
     private function setDefault($name, array $field_default)
     {
         if (!isset($this->defaults[$name])) {
-            require_once __DIR__.'/VardefModifier/Exception/UnsupportedDefaultsType.php';
-            throw new VardefModifier_Exception_UnsupportedDefaultsType($name);
+            throw new Exception\UnsupportedDefaultsType($name);
         }
 
         $this->defaults[$name] = array_merge($this->defaults[$name], $field_default);
@@ -939,7 +933,8 @@ class VardefModifier
      * @param string $name
      * @param array  $settings
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     private function addName($name, array $settings)
     {
@@ -954,15 +949,14 @@ class VardefModifier
 
     /**
      * @param string $name
-     * @param array  $settings
-     *
-     * @return \VardefModifier
+     * @param array $settings
+     * @return VardefModifier
+     * @throws Exception
      */
     private function addRelate($name, array $settings)
     {
         if (!isset($settings['module'])) {
-            require_once __DIR__.'/VardefModifier/Exception/InvalidDefinitionFormat.php';
-            throw new VardefModifier_Exception_InvalidDefinitionFormat('Missing module');
+            throw new Exception\InvalidDefinitionFormat('Missing module');
         }
 
         $default = array(
@@ -986,7 +980,8 @@ class VardefModifier
      * @param string $name
      * @param array  $settings
      *
-     * @return $this
+     * @return VardefModifier
+     * @throws Exception
      */
     private function addAddress($name, array $settings = array())
     {
@@ -1023,7 +1018,10 @@ class VardefModifier
      * @param string $name
      * @param array
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception\InvalidDefinitionFormat
+     * @throws Exception\UnsupportedDefaultsType
+     * @throws Exception
      */
     private function addCurrency($name, array $settings = array())
     {
@@ -1064,7 +1062,8 @@ class VardefModifier
      * @param string $name
      * @param array  $settings
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     private function addLink($name, array $settings = array())
     {
@@ -1098,7 +1097,8 @@ class VardefModifier
      * @param string $name
      * @param array  $settings
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     private function addEnum($name, array $settings = array())
     {
@@ -1109,7 +1109,8 @@ class VardefModifier
      * @param string $name
      * @param array  $settings
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     private function addMultienum($name, array $settings = array())
     {
@@ -1120,7 +1121,8 @@ class VardefModifier
      * @param string $name
      * @param array  $settings
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     public function addInt($name, array $settings)
     {
@@ -1144,7 +1146,8 @@ class VardefModifier
      * @param array  $settings
      * @param array  $default
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     private function addEnumLike($name, array $default, array $settings)
     {
@@ -1156,7 +1159,8 @@ class VardefModifier
     /**
      * @param string $name
      *
-     * @return \VardefModifier
+     * @return VardefModifier
+     * @throws Exception
      */
     private function addDefaultField($name)
     {
@@ -1171,6 +1175,7 @@ class VardefModifier
 
     /**
      * @return array
+     * @throws Exception
      */
     private function getBase()
     {
@@ -1179,6 +1184,7 @@ class VardefModifier
 
     /**
      * @param string $name
+     * @param array $definition
      *
      * @return array
      */
@@ -1191,6 +1197,7 @@ class VardefModifier
     }
 
     /**
+     * @param string $name
      * @return string
      */
     private function getVName($name)

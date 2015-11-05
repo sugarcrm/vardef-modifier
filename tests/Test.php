@@ -1,11 +1,13 @@
 <?php
 
-require_once dirname(dirname(__FILE__)).'/VardefModifier.php';
+namespace DRI\SugarCRM\VardefModifier\Tests;
+
+use DRI\SugarCRM\VardefModifier\VardefModifier;
 
 /**
  * @author Emil Kilhage
  */
-class VardefModifier_Test extends PHPUnit_Framework_TestCase
+class VardefModifier_Test extends \PHPUnit_Framework_TestCase
 {
     private $module_name;
     private $object_name;

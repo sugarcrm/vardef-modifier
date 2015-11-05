@@ -1,9 +1,11 @@
 <?php
 
+namespace DRI\SugarCRM\VardefModifier;
+
 /**
  * @author Emil Kilhage
  */
-class VardefModifier_Version
+class Version
 {
     /**
      * @var int
@@ -57,7 +59,7 @@ class VardefModifier_Version
     {
         global $sugar_version;
 
-        if (isset($this->majorVersion)) {
+        if (null !== $this->majorVersion) {
             return;
         }
 
