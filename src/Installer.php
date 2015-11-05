@@ -33,6 +33,11 @@ class Installer
     private $onlyPhp = false;
 
     /**
+     * @var null|string
+     */
+    private $name = null;
+
+    /**
      * @var array
      */
     private $modules = array();
@@ -83,6 +88,14 @@ class Installer
     public function setModules(array $modules)
     {
         $this->modules = $modules;
+    }
+
+    /**
+     * @param null|string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**
@@ -175,9 +188,16 @@ PHP;
     private function getYamlFilePath($module)
     {
         $dir = $this->core ? "modules/$module" : "custom/modules/$module";
+
+        if (null !== $this->name) {
+            $dir .= "/vardefs";
+        }
+
         is_dir($dir) or mkdir($dir, 0755, true);
 
-        return "$dir/vardefs.yml";
+        $fileName = null !== $this->name ? $this->name : 'vardefs';
+
+        return "$dir/$fileName.yml";
     }
 
     /**
@@ -192,7 +212,15 @@ PHP;
 
         is_dir($dir) or mkdir($dir, 0755, true);
 
-        return "$dir/".($this->core ? 'vardefs.php' : 'yaml_vardefs.php');
+        if ($this->core) {
+            $fileName = 'vardefs.php';
+        } elseif (null !== $this->name) {
+            $fileName = "0yaml_{$this->name}_vardefs.php";
+        } else {
+            $fileName = '0yaml_vardefs.php';
+        }
+
+        return "$dir/$fileName";
     }
 
     /**

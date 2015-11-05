@@ -20,14 +20,16 @@ class InstallCommand extends Command
     protected function configure()
     {
         $this->setName('install');
+
         $this->addOption('force', 'F', InputOption::VALUE_NONE);
         $this->addOption('core', 'C', InputOption::VALUE_NONE);
-        $this->addOption('dry', null, InputOption::VALUE_NONE);
+        $this->addOption('dry', 'D', InputOption::VALUE_NONE);
         $this->addOption('only-yml', 'Y', InputOption::VALUE_NONE);
         $this->addOption('only-php', 'P', InputOption::VALUE_NONE);
+        $this->addOption('target', 'T', InputOption::VALUE_OPTIONAL);
 
-        $this->addOption('path', 'P', InputOption::VALUE_OPTIONAL);
-        $this->addOption('module', 'M', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY);
+        $this->addOption('module', 'm', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY);
+        $this->addOption('name', 'N', InputOption::VALUE_OPTIONAL);
 
         $this->setDescription('Installs an empty yaml vardef addition for a module');
     }
@@ -37,7 +39,7 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $path = $input->hasOption('path') ? $input->getOption('path') : null;
+        $path = $input->hasOption('target') ? $input->getOption('target') : null;
 
         Bootstrap::boot($path);
 
@@ -47,6 +49,7 @@ class InstallCommand extends Command
         $installer->setForce($input->getOption('force'));
         $installer->setDry($input->getOption('dry'));
         $installer->setModules($input->getOption('module'));
+        $installer->setName($input->getOption('name'));
 
         $installer->install();
     }
