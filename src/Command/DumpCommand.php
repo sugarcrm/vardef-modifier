@@ -22,7 +22,7 @@ class DumpCommand extends AbstractCommand
     {
         $this->setName('dump');
         $this->addArgument('module', InputArgument::REQUIRED, '');
-        $this->addArgument('yaml', InputArgument::REQUIRED, '');
+        $this->addArgument('yml', InputArgument::REQUIRED, '');
         $this->addArgument('name', InputArgument::REQUIRED, '');
         $this->setDescription('');
         parent::configure();
@@ -38,7 +38,7 @@ class DumpCommand extends AbstractCommand
         global $beanList;
 
         $moduleName = $input->getArgument('module');
-        $fileName = $input->getArgument('yaml');
+        $fileName = $input->getArgument('yml');
         $targetFileName = $input->getArgument('name');
 
         $vm = VardefModifier::modify($moduleName, array());
@@ -73,9 +73,21 @@ class DumpCommand extends AbstractCommand
 
         foreach ($definitions as $type => $sub) {
             foreach ($sub as $name => $def) {
+
+                $isChange = $type === 'fields' && !isset($def['name']);
+
+                if ($isChange) {
+                    foreach ($def as $key => $value) {
+                        $def[$key] = var_export($value, true);
+                    }
+                } else {
+                    $def = var_export($def, true);;
+                }
+
                 $arguments[$type][$name] = array(
                     'name' => $name,
-                    'def' => var_export($def, true),
+                    'def' => $def,
+                    'isChange' => $isChange,
                 );
             }
         }

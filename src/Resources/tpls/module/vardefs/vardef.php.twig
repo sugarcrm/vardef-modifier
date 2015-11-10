@@ -7,7 +7,13 @@
  */
 
 {% for field in fields %}
+{% if field.isChange %}
+{% for key,value in field.def %}
+$dictionary['{{ dictionaryKey }}']['fields']['{{ field.name }}']['{{ key }}'] = {{ value | raw }};
+{% endfor %}
+{% else %}
 $dictionary['{{ dictionaryKey }}']['fields']['{{ field.name }}'] = {{ field.def | raw }};
+{% endif %}
 
 {% endfor %}
 {% for relationship in relationships %}
