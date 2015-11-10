@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @author Emil Kilhage
  */
-class MigrateCommand extends Command
+class MigrateCommand extends AbstractCommand
 {
     /**
      * {@inheritdoc}

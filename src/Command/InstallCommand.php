@@ -2,9 +2,7 @@
 
 namespace DRI\SugarCRM\VardefModifier\Command;
 
-use DRI\SugarCRM\Bootstrap\Bootstrap;
 use DRI\SugarCRM\VardefModifier\Installer;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @author Emil Kilhage
  */
-class InstallCommand extends Command
+class InstallCommand extends AbstractCommand
 {
     /**
      * {@inheritdoc}
@@ -26,12 +24,13 @@ class InstallCommand extends Command
         $this->addOption('dry', 'D', InputOption::VALUE_NONE);
         $this->addOption('only-yml', 'Y', InputOption::VALUE_NONE);
         $this->addOption('only-php', 'P', InputOption::VALUE_NONE);
-        $this->addOption('target', 'T', InputOption::VALUE_OPTIONAL);
 
         $this->addOption('module', 'm', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY);
         $this->addOption('name', 'N', InputOption::VALUE_OPTIONAL);
 
         $this->setDescription('Installs an empty yaml vardef addition for a module');
+
+        parent::configure();
     }
 
     /**
@@ -39,9 +38,7 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $path = $input->hasOption('target') ? $input->getOption('target') : null;
-
-        Bootstrap::boot($path);
+        $path = $this->bootstrap($input);
 
         $installer = new Installer($path);
 
@@ -50,6 +47,8 @@ class InstallCommand extends Command
         $installer->setDry($input->getOption('dry'));
         $installer->setModules($input->getOption('module'));
         $installer->setName($input->getOption('name'));
+        $installer->setOnlyPhp($input->getOption('only-php'));
+        $installer->setOnlyYml($input->getOption('only-yml'));
 
         $installer->install();
     }

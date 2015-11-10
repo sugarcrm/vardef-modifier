@@ -12,6 +12,8 @@
     "require": {
         "symfony/console": "~2.4",
         "symfony/yaml": "~2.7",
+        "twig/twig": "~1.15",
+        "symfony/filesystem": "~2.4",
         "dri-nordic/sugarcrm-bootstrap": "~0.1"
     },
     "bin": [
