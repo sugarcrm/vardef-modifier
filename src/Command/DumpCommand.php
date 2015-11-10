@@ -21,10 +21,10 @@ class DumpCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('dump');
-        $this->addArgument('module', InputArgument::REQUIRED, '');
-        $this->addArgument('yml', InputArgument::REQUIRED, '');
-        $this->addArgument('name', InputArgument::REQUIRED, '');
-        $this->setDescription('');
+        $this->addArgument('module', InputArgument::REQUIRED, 'The module you want to dump the definition of, e.g. Accounts');
+        $this->addArgument('yml', InputArgument::REQUIRED, 'the yml vardef you want to dump, e.g. src/modules/DRI_Workflows/vardefs.yml');
+        $this->addArgument('name', InputArgument::REQUIRED, 'the name of the target file you want to dump the file to, e.g. "eniro" without the .php extension');
+        $this->setDescription('Dumps a .yml vardef to a php extension');
         parent::configure();
     }
 

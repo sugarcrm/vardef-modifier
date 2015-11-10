@@ -17,7 +17,7 @@ abstract class AbstractCommand extends Command
      */
     protected function configure()
     {
-        $this->addOption('target', 'T', InputOption::VALUE_OPTIONAL);
+        $this->addOption('target', 'T', InputOption::VALUE_OPTIONAL, 'target sugar path that should be used as context, defaults to the current working directory');
     }
 
     /**
