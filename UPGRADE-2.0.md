@@ -29,6 +29,8 @@ This can be done like this:
 
 If you have these situations where you can not include the library as a composer dependency you should rather use this tool from outside of the project and dump the vardef definitions trough the `dump` command
 
+If you still need to include the library as a submodule, please make sure that the `1.2` branch is used and not `master` or any `2.0` branch as this may break existing code.
+
 ### Namespace
 
 The VardefModifier class has been moved into its own namespace and is now referenced like this
