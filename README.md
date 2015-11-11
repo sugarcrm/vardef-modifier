@@ -1,8 +1,7 @@
-sugarcrm-vardef-modifier
+vardef-modifier
 ========
 
-About
----------------------
+# About
 
  * __Author:__ Emil Kilhage
  * __Date Created:__ 2012-04-24
@@ -10,25 +9,32 @@ About
 
 See vardefs.example.yml for some syntax references.
 
-Installation
----------------------
+# Installation
 
-# Install in project
+Require the library with composer:
 
-git submodule add gitolite@gitlab.dri-nordic.com:dri-nordic/vardef-modifier docroot/custom/include/VardefModifier
+   ```bash
+    $ composer require dri-nordic/vardef-modifier "~2.0@dev"
+   ```
 
-# Install in module
+Composer will install the library to your project's `vendor/dri-nordic/vardef-modifier` directory.
+
+# Usage
+
+Run the help help command for full documentation:
+
+```bash
+    php bin/vardef-modifier
+```
 
 ## Install in custom module
 
-php docroot/custom/include/VardefModifier/install.php DRI_Invoices -c
+```bash
+    php bin/vardef-modifier install -m DRI_Invoices -c
+```
 
 ## Install in core module
 
-php docroot/custom/include/VardefModifier/install.php Accounts
-
-Todo
----------------------
-
- * Make it possible to install as composer dependency
- * Make it possible to export .yml definitions to php files
+```bash
+    php bin/vardef-modifier install -m Accounts
+```
