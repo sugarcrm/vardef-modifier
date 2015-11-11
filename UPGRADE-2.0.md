@@ -38,7 +38,7 @@ The VardefModifier class has been moved into its own namespace and is now refere
 All commands previously accessed in the root of the repo has been moved into using symfony's console framework
 
    | Old Command | New Command
-   | -------- | ---
+   | ----------- | ---
    | `install.php Accounts` | `bin/vardef-modifier install Accounts`
 
 A few new commands has also been added, to see what is available run:
