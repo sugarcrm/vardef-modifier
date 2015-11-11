@@ -24,23 +24,55 @@ Composer will install the library to your project's `vendor/dri-nordic/vardef-mo
 Run the help command for full documentation about available commands:
 
 ```bash
-php bin/vardef-modifier help
+bin/vardef-modifier help
 ```
+
+## install
 
 Run the help command as the command name as the first parameter for full documentation about the command:
 
 ```bash
-php bin/vardef-modifier help install
+bin/vardef-modifier help install
 ```
 
-## Install in custom module
+### Install in custom module
 
 ```bash
-php bin/vardef-modifier install -m DRI_Invoices -c
+bin/vardef-modifier install -m DRI_Invoices -c
 ```
 
-## Install in core module
+### Install in core module
 
 ```bash
-php bin/vardef-modifier install -m Accounts
+bin/vardef-modifier install -m Accounts
+```
+
+## dump
+
+### normal usage
+
+```bash
+bin/vardef-modifier dump DRI_Workflows modules/DRI_Workflows/vardefs.yml dri-customer-journey
+```
+
+### use the dump command from outside of Sugar
+
+```bash
+bin/vardef-modifier dump -T ~/www/sugarcrm-7.6.0.0 DRI_Workflows modules/DRI_Workflows/vardefs.yml dri-customer-journey
+```
+
+## migrate
+
+NOT FINISHED
+
+### List files that needs to be migrated
+
+```bash
+bin/vardef-modifier migrate --find
+```
+
+### Attempt to automatically migrate files
+
+```bash
+bin/vardef-modifier migrate --write
 ```
