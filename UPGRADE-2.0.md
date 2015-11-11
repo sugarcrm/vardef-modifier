@@ -1,4 +1,4 @@
-UPGRADE FROM 2.x to 3.0
+UPGRADE FROM 1.x to 2.0
 =======================
 
 ### Composer support
