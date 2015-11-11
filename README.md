@@ -11,10 +11,24 @@ See vardefs.example.yml for some syntax references.
 
 # Installation
 
-Require the library with composer:
+Add the dependency to composer.json:
+
+   ```json
+    {
+        "require": {
+            "dri-nordic/vardef-modifier": "~2.0"
+        },
+        "repositories": [
+            {
+                "type": "composer",
+                "url":  "https://packages.dricrm.com/"
+            }
+        ]
+    }
+   ```
 
 ```bash
-composer require dri-nordic/vardef-modifier "~2.0@dev"
+composer install
 ```
 
 Composer will install the library to your project's `vendor/dri-nordic/vardef-modifier` directory.
