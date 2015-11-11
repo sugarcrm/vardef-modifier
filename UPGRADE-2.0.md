@@ -52,7 +52,9 @@ The new command is used like this:
 Here is the full help of the new install command, run this command your self for the latest help, also look at the other documentation for a more complete overview of this
 
    ```bash
-   $ bin/vardef-modifier help install
+
+    bin/vardef-modifier help install
+
     Usage:
       install [options]
     
