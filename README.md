@@ -16,7 +16,7 @@ Add the dependency to composer.json:
 ```json
 {
     "require": {
-        "dri-nordic/vardef-modifier": "~2.0"
+        "dri-nordic/vardef-modifier": "~2.0@dev"
     },
     "repositories": [
         {
