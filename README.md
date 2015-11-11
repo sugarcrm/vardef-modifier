@@ -27,6 +27,8 @@ Add the dependency to composer.json:
 }
 ```
 
+And run:
+
 ```bash
 composer install
 ```
