@@ -21,10 +21,16 @@ Composer will install the library to your project's `vendor/dri-nordic/vardef-mo
 
 # Usage
 
-Run the help help command for full documentation:
+Run the help command for full documentation about available commands:
 
 ```bash
 php bin/vardef-modifier help
+```
+
+Run the help command as the command name as the first parameter for full documentation about the command:
+
+```bash
+php bin/vardef-modifier help install
 ```
 
 ## Install in custom module
