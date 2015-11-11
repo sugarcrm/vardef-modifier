@@ -3,7 +3,7 @@ UPGRADE FROM 1.x to 2.0
 
 ### Composer support
 
-In v3.0 the VardefModifier can be included as a composer dependency
+In v2.0 the VardefModifier can be included as a composer dependency
 
    ```json
     {
