@@ -100,7 +100,7 @@ class DumpCommand extends AbstractCommand
 
         $output->writeln("Writing vardef to $targetFilePath");
 
-        $content = $twig->render('module/vardefs/vardef.php.twig', $arguments);
+        $content = $twig->render('custom/Extensions/modules/Module/Ext/Vardefs/vardefs.dump.php.twig', $arguments);
 
         $content = trim($content)."\n";
 

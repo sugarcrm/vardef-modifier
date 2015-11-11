@@ -81,14 +81,34 @@ bin/vardef-modifier dump -T ~/www/sugarcrm-7.6.0.0 DRI_Workflows modules/DRI_Wor
 
 NOT FINISHED
 
+Migrates the target directory to the current version of the library
+
 ### List files that needs to be migrated
 
 ```bash
-bin/vardef-modifier migrate --find
+bin/vardef-modifier migrate:find
 ```
 
 ### Attempt to automatically migrate files
 
 ```bash
-bin/vardef-modifier migrate --write
+bin/vardef-modifier migrate:write
+```
+
+### Attempt to automatically migrate files
+
+```bash
+bin/vardef-modifier migrate:write --force
+```
+
+## setup
+
+NOT FINISHED
+
+Installs the library in the target directory
+
+### List files that needs to be migrated
+
+```bash
+bin/vardef-modifier setup
 ```
