@@ -13,19 +13,19 @@ See vardefs.example.yml for some syntax references.
 
 Add the dependency to composer.json:
 
-   ```json
-    {
-        "require": {
-            "dri-nordic/vardef-modifier": "~2.0"
-        },
-        "repositories": [
-            {
-                "type": "composer",
-                "url":  "https://packages.dricrm.com/"
-            }
-        ]
-    }
-   ```
+```json
+{
+    "require": {
+        "dri-nordic/vardef-modifier": "~2.0"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url":  "https://packages.dricrm.com/"
+        }
+    ]
+}
+```
 
 ```bash
 composer install
