@@ -9,19 +9,15 @@ This can be done like this:
 
    ```json
     {
-        // ...
         "require": {
-            // ...
             "dri-nordic/vardef-modifier": "~2.0"
         },
-        // ...
         "repositories": [
             {
                 "type": "composer",
                 "url":  "https://packages.dricrm.com/"
             }
-        ],
-        // ...
+        ]
     }
    ```
 
