@@ -43,6 +43,11 @@ class Installer
     private $modules = array();
 
     /**
+     * @var Template
+     */
+    private $template;
+
+    /**
      * @param boolean $force
      */
     public function setForce($force)
@@ -99,6 +104,14 @@ class Installer
     }
 
     /**
+     * Installer constructor.
+     */
+    public function __construct()
+    {
+        $this->template = new Template();
+    }
+
+    /**
      * @throws Exception
      */
     public function install()
@@ -125,9 +138,10 @@ class Installer
      */
     private function getYamlTemplate($module)
     {
-        $file = file_get_contents(dirname(__DIR__).'/vardefs.template.yml');
-
-        return str_replace('$module', $module, $file);
+        return $this->template->render('modules/Module/vardefs.yml.twig', array (
+            'version' => VardefModifier::VERSION,
+            'module' => $module,
+        ));
     }
 
     /**
@@ -136,33 +150,12 @@ class Installer
      */
     private function getPhpTemplate($module)
     {
-        $class_name = __CLASS__;
-
-        return <<<PHP
-<?php
-
-/* Installed by \\$class_name */
-if (!isset(\$dictionary) || !is_array(\$dictionary))
-    global \$dictionary;
-{$this->getPhpCode($module)}
-/* End installation */
-
-PHP;
-    }
-
-    /**
-     * @param string $module
-     * @return string
-     */
-    private function getPhpCode($module)
-    {
-        return <<<PHP
-if (class_exists('\DRI\SugarCRM\VardefModifier\VardefModifier')) {
-    \$dictionary = \DRI\SugarCRM\VardefModifier\VardefModifier::modify("$module", \$dictionary)->
-        yaml("{$this->getYamlFilePath($module)}")->
-        get();
-}
-PHP;
+        return $this->template->render('custom/Extensions/modules/Module/Ext/Vardefs/vardefs.include.php.twig', array (
+            'className' => __CLASS__,
+            'version' => VardefModifier::VERSION,
+            'module' => $module,
+            'path' => $this->getYamlFilePath($module),
+        ));
     }
 
     /**
@@ -171,14 +164,12 @@ PHP;
      */
     private function getPhpCoreVardefAddition($module)
     {
-        $class_name = __CLASS__;
-
-        return <<<PHP
-/* Installed by $class_name */
-{$this->getPhpCode($module)}
-/* End installation */
-
-PHP;
+        return $this->template->render('modules/Module/vardefs.include.php.twig', array (
+            'className' => __CLASS__,
+            'version' => VardefModifier::VERSION,
+            'module' => $module,
+            'path' => $this->getYamlFilePath($module),
+        ));
     }
 
     /**

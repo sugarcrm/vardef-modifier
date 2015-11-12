@@ -2,6 +2,7 @@
 
 namespace DRI\SugarCRM\VardefModifier\Command;
 
+use DRI\SugarCRM\VardefModifier\Template;
 use DRI\SugarCRM\VardefModifier\VardefModifier;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -50,11 +51,6 @@ class DumpCommand extends AbstractCommand
 
         $dic = $vm->get();
 
-        $templatePath = dirname(__DIR__);
-
-        $fs = new Filesystem();
-        $twig = new \Twig_Environment(new \Twig_Loader_Filesystem("$templatePath/Resources/tpls"));
-
         $definitions = array(
             'fields' => isset($dic[$dictionaryKey]['fields']) ? $dic[$dictionaryKey]['fields'] : array(),
             'relationships' => isset($dic[$dictionaryKey]['relationships']) ? $dic[$dictionaryKey]['relationships'] : array(),
@@ -100,10 +96,12 @@ class DumpCommand extends AbstractCommand
 
         $output->writeln("Writing vardef to $targetFilePath");
 
-        $content = $twig->render('custom/Extensions/modules/Module/Ext/Vardefs/vardefs.dump.php.twig', $arguments);
+        $template = new Template();
+        $content = $template->render('custom/Extensions/modules/Module/Ext/Vardefs/vardefs.dump.php.twig', $arguments);
 
         $content = trim($content)."\n";
 
+        $fs = new Filesystem();
         $fs->dumpFile($targetFilePath, $content);
     }
 }

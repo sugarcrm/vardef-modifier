@@ -1,5 +1,7 @@
-<?php
-
-/**
- * $version: {{ version }};
- */
+/* $installer: {{ className }}; $version: {{ version }}; */
+if (class_exists('\DRI\SugarCRM\VardefModifier\VardefModifier')) {
+    \$dictionary = \DRI\SugarCRM\VardefModifier\VardefModifier::modify("{{ module }}", \$dictionary)->
+        yaml("{{ path }}")->
+        get();
+}
+/* End installation */

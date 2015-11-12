@@ -12,6 +12,9 @@ use Symfony\Component\Yaml\Yaml;
  */
 class VardefModifier
 {
+    const VERSION = 2;
+    private $version;
+
     /**
      * Holds the default field definitions that all fields are built from
      * This is loaded from the ./defaults.yml file by VardefModifier::loadDefaults.
@@ -262,17 +265,27 @@ class VardefModifier
      */
     public function def(array $def)
     {
+        static $keys = array(
+            'version',
+            'defaults',
+            'add',
+            'change',
+            'remove'
+        );
+
         try {
-            static $keys = array('defaults', 'add', 'change', 'remove');
             // These methods needs to be executed to the correct order
             foreach ($keys as $key) {
-                if (isset($def[$key])) {
-                    $this->$key($def[$key]);
+                if (array_key_exists($key, $def)) {
+                    if (is_array($def[$key])) {
+                        $this->$key($def[$key]);
+                    }
+
                     unset($def[$key]);
                 }
             }
 
-            if (!empty($def)) {
+            if (count($def) > 0) {
                 throw new Exception\InvalidDefinitionFormat(
                     'Invalid key(s): '.implode(', ', array_keys($def))
                 );
@@ -301,10 +314,13 @@ class VardefModifier
     {
         foreach ($keys as $key => $fields) {
             if (!is_array($fields)) {
-                throw new Exception\InvalidDefinitionFormat("\$fields must be array");
+                continue;
             }
 
             switch ($key) {
+                case 'version':
+                    $this->setVersion($fields);
+                    break;
                 case 'fields':
                     $this->addFields($fields);
                     break;
@@ -323,6 +339,14 @@ class VardefModifier
         }
 
         return $this;
+    }
+
+    /**
+     * @param int $version
+     */
+    private function setVersion($version)
+    {
+        $this->version = $version;
     }
 
     /**
@@ -687,6 +711,10 @@ class VardefModifier
                         $name = $settings;
                         $this->addField($name, $type);
                     } else {
+                        if (null === $settings) {
+                            $settings = array ();
+                        }
+
                         $this->addField($name, $type, $settings);
                     }
                 }
