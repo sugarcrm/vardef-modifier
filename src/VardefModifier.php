@@ -13,7 +13,11 @@ use Symfony\Component\Yaml\Yaml;
 class VardefModifier
 {
     const VERSION = 2;
-    private $version;
+
+    /**
+     * @var int
+     */
+    private $version = 1;
 
     /**
      * Holds the default field definitions that all fields are built from
@@ -270,7 +274,7 @@ class VardefModifier
             'defaults',
             'add',
             'change',
-            'remove'
+            'remove',
         );
 
         try {
