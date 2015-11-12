@@ -42,8 +42,7 @@ class DumpCommand extends AbstractCommand
         $fileName = $input->getArgument('yml');
         $targetFileName = $input->getArgument('name');
 
-        $vm = VardefModifier::modify($moduleName, array());
-        $vm->yaml($fileName);
+        $vm = VardefModifier::modify($moduleName)->yaml($fileName);
 
         $objectName = $beanList[$moduleName];
 
@@ -55,6 +54,7 @@ class DumpCommand extends AbstractCommand
             'fields' => isset($dic[$dictionaryKey]['fields']) ? $dic[$dictionaryKey]['fields'] : array(),
             'relationships' => isset($dic[$dictionaryKey]['relationships']) ? $dic[$dictionaryKey]['relationships'] : array(),
             'indices' => isset($dic[$dictionaryKey]['indices']) ? $dic[$dictionaryKey]['indices'] : array(),
+            'duplicate_check' => isset($dic[$dictionaryKey]['duplicate_check']) ? $dic[$dictionaryKey]['duplicate_check'] : array(),
         );
 
         $arguments = array(

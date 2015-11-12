@@ -24,3 +24,7 @@ $dictionary['{{ dictionaryKey }}']['relationships']['{{ relationship.name }}'] =
 $dictionary['{{ dictionaryKey }}']['indices']['{{ index.name }}'] = {{ index.def | raw }};
 
 {% endfor %}
+{% for check in duplicate_check %}
+$dictionary['{{ dictionaryKey }}']['duplicate_check']['{{ check.name }}'] = {{ check.def | raw }};
+
+{% endfor %}
