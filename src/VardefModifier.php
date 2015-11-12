@@ -37,12 +37,12 @@ class VardefModifier
      * @param string $module_name
      * @param array  $dictionary
      *
-     * @return VardefModifier
+     * @return VardefModifierFactory
      * @throws Exception
      */
-    public static function modify($module_name, array $dictionary)
+    public static function modify($module_name, array $dictionary = array ())
     {
-        return new self($module_name, $dictionary);
+        return new VardefModifierFactory($module_name, $dictionary);
     }
 
     /**
