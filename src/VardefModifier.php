@@ -2,9 +2,6 @@
 
 namespace DRI\SugarCRM\VardefModifier;
 
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Yaml;
-
 /**
  * Simplifies modifications of SugarCRM vardef definitions.
  *
@@ -52,13 +49,12 @@ class VardefModifier
      * @return array
      *
      * @throws Exception
-     * @throws ParseException
      */
     private static function loadDefaults()
     {
         if (!isset(self::$_defaults)) {
             $file = dirname(__DIR__).'/defaults.yml';
-            self::$_defaults = Yaml::parse($file);
+            self::$_defaults = YamlParser::parse($file);
         }
     }
 
@@ -236,16 +232,10 @@ class VardefModifier
      *
      * @throws Exception
      * @throws Exception\InvalidFilePath
-     * @throws ParseException
      */
     public function yaml($file)
     {
-        if (!file_exists($file)) {
-            throw new Exception\InvalidFilePath($file);
-        }
-
-        $def = Yaml::parse($file);
-
+        $def = YamlParser::parse($file);
         return $this->def($def);
     }
 
