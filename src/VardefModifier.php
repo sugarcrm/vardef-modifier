@@ -1105,12 +1105,20 @@ class VardefModifier
 
         $relationship_names[] = $this->module_name;
 
-        $this->addFieldToVardef($name, array_merge(
+        $setSide = !isset($settings['side']);
+
+        $def = array_merge(
             $this->getDefault('link'), array(
                 'bean_name' => $object_name,
                 'relationship' => strtolower(implode('_', $relationship_names)),
             ), $settings
-        ));
+        );
+
+        if ($setSide && false !== strpos('_flex_relate_', $def['relationship'])) {
+            $def['side'] = 'right';
+        }
+
+        $this->addFieldToVardef($name, $def);
 
         return $this;
     }

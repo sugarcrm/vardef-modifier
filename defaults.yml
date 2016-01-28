@@ -55,7 +55,10 @@ relate: { source: non-db, type: relate }
 readonly: { type: readonly }
 name: { rname: name }
 password: { type: password, dbType: varchar }
-link: { source: non-db, type: link }
+link:
+    source: non-db
+    type: link
+    side: left
 address:
     all:
         type: varchar
@@ -79,7 +82,8 @@ flex_relate:
         options: parent_type_display
 flex_relate_link:
     prefix: parent
-    link: {}
+    link:
+        side: left
     relationship:
         lhs_key: id
         relationship_type: one-to-many
@@ -88,13 +92,13 @@ flex_relate_link:
 relationship:
     id: {}
     name: {}
-    link: {}
-    index: {}
+    link:
+        side: right
+    index: { }
     relationship:
         relationship_type: one-to-many
         lhs_key: id
 ##############################################################
-#
 Activities:
     Tasks: { link: {}, relationship: {} }
     Notes: { link: {}, relationship: {} }
