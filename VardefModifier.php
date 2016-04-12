@@ -1049,7 +1049,7 @@ class VardefModifier
 
             $baseSettings['calculated'] = true;
             $baseSettings['enforced'] = true;
-            $baseSettings['formula'] = "divide(\$$name,\$base_rate)";
+            $baseSettings['formula'] = "ifElse(isNumeric(\$$name), currencyDivide(\$$name, \$base_rate), \"\")";
         }
 
         return $this->
