@@ -108,7 +108,19 @@ add:
         address:
             - primary
         #################################################
-
+        
+        #################################################
+        # Dependencies.
+        # In this example the field is hidden unless
+        # the dependency is satisfied.
+        #
+        varchar:
+            someField:
+                dependency: equal($status,"Converted")
+        
+        
+        #################################################
+        
         #################################################
         link:
             #################################################
