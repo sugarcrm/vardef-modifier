@@ -1040,7 +1040,7 @@ class VardefModifier
         if ($this->version->getMajorVersion() >= 7) {
             $template['convertToBase'] = true;
             $template['showTransactionalAmount'] = true;
-            $template['validation'] = array('type' => 'range', 'min' => 0);
+            $template['validation'] = array();
             $template['related_fields'] = array('currency_id', 'base_rate');
 
             $baseTemplate['readonly'] = true;
