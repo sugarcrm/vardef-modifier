@@ -503,6 +503,13 @@ class VardefModifier
             unset($settings['required']);
         }
 
+        if (isset($settings['readonly'])) {
+            $settings['id']['readonly'] = $settings['readonly'];
+            $settings['name']['readonly'] = $settings['readonly'];
+            $settings['type']['readonly'] = $settings['readonly'];
+            unset($settings['readonly']);
+        }
+
         $id_name = $prefix.'_id';
         $name_name = $prefix.'_name';
         $type_name = $prefix.'_type';
