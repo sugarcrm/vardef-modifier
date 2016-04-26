@@ -503,6 +503,7 @@ class VardefModifier
             $settings['name']['options'] = $settings['options'];
             $settings['name']['parent_type'] = $settings['options'];
             $settings['type']['parent_type'] = $settings['options'];
+            $settings['type']['options'] = $settings['options'];
             unset($settings['options']);
         }
 
@@ -510,6 +511,13 @@ class VardefModifier
             $settings['id']['required'] = $settings['required'];
             $settings['name']['required'] = $settings['required'];
             $settings['type']['required'] = $settings['required'];
+            unset($settings['required']);
+        }
+
+        if (isset($settings['readonly'])) {
+            $settings['id']['readonly'] = $settings['readonly'];
+            $settings['name']['readonly'] = $settings['readonly'];
+            $settings['type']['readonly'] = $settings['readonly'];
             unset($settings['required']);
         }
 
