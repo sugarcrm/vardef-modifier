@@ -518,7 +518,14 @@ class VardefModifier
             $settings['id']['readonly'] = $settings['readonly'];
             $settings['name']['readonly'] = $settings['readonly'];
             $settings['type']['readonly'] = $settings['readonly'];
-            unset($settings['required']);
+            unset($settings['readonly']);
+        }
+
+        if (isset($settings['help'])) {
+            $settings['id']['help'] = $settings['help'];
+            $settings['name']['help'] = $settings['help'];
+            $settings['type']['help'] = $settings['help'];
+            unset($settings['help']);
         }
 
         $id_name = $prefix.'_id';
@@ -1072,7 +1079,7 @@ class VardefModifier
         if ($this->version->getMajorVersion() >= 7) {
             $template['convertToBase'] = true;
             $template['showTransactionalAmount'] = true;
-            $template['validation'] = array('type' => 'range', 'min' => 0);
+            $template['validation'] = array();
             $template['related_fields'] = array('currency_id', 'base_rate');
 
             $baseTemplate['readonly'] = true;
@@ -1081,7 +1088,7 @@ class VardefModifier
 
             $baseSettings['calculated'] = true;
             $baseSettings['enforced'] = true;
-            $baseSettings['formula'] = "ifElse(not(equal(\$$name, \"\")), divide(\$$name,\$base_rate), \"\")";
+            $baseSettings['formula'] = "ifElse(isNumeric(\$$name), currencyDivide(\$$name, \$base_rate), \"\")";
         }
 
         return $this->
