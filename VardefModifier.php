@@ -1143,6 +1143,7 @@ class VardefModifier
         if (!empty($settings['auto_increment'])) {
             $default['readonly'] = true;
             $indexSettings = !empty($settings['index']) ? $settings['index'] : array();
+            $indexSettings['type'] = 'unique';
             $this->addIndex($name, $indexSettings);
         }
 
