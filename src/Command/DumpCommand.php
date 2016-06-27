@@ -25,6 +25,7 @@ class DumpCommand extends AbstractCommand
         $this->addArgument('module', InputArgument::REQUIRED, 'The module you want to dump the definition of, e.g. Accounts');
         $this->addArgument('yml', InputArgument::REQUIRED, 'the yml vardef you want to dump, e.g. src/modules/DRI_Workflows/vardefs.yml');
         $this->addArgument('name', InputArgument::REQUIRED, 'the name of the target file you want to dump the file to, e.g. "eniro" without the .php extension');
+        $this->addOption('core', 'C', InputOption::VALUE_NONE, '');
         $this->setDescription('Dumps a .yml vardef to a php extension');
         parent::configure();
     }
@@ -55,6 +56,8 @@ class DumpCommand extends AbstractCommand
             'relationships' => isset($dic[$dictionaryKey]['relationships']) ? $dic[$dictionaryKey]['relationships'] : array(),
             'indices' => isset($dic[$dictionaryKey]['indices']) ? $dic[$dictionaryKey]['indices'] : array(),
             'duplicate_check' => isset($dic[$dictionaryKey]['duplicate_check']) ? $dic[$dictionaryKey]['duplicate_check'] : array(),
+            'acls' => isset($dic[$dictionaryKey]['acls']) ? $dic[$dictionaryKey]['acls'] : array(),
+            'visibility' => isset($dic[$dictionaryKey]['visibility']) ? $dic[$dictionaryKey]['visibility'] : array(),
         );
 
         $arguments = array(
@@ -77,7 +80,7 @@ class DumpCommand extends AbstractCommand
                         $def[$key] = var_export($value, true);
                     }
                 } else {
-                    $def = var_export($def, true);;
+                    $def = var_export($def, true);
                 }
 
                 $arguments[$type][$name] = array(
@@ -92,7 +95,11 @@ class DumpCommand extends AbstractCommand
             return;
         }
 
-        $targetFilePath = "custom/Extension/modules/$moduleName/Ext/Vardefs/$targetFileName.php";
+        if ($input->getOption('core')) {
+            $targetFilePath = "modules/$moduleName/Ext/Vardefs/$targetFileName.php";
+        } else {
+            $targetFilePath = "custom/Extension/modules/$moduleName/Ext/Vardefs/$targetFileName.php";
+        }
 
         $output->writeln("Writing vardef to $targetFilePath");
 

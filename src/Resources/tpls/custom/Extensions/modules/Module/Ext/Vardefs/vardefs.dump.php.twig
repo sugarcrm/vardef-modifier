@@ -28,3 +28,12 @@ $dictionary['{{ dictionaryKey }}']['indices']['{{ index.name }}'] = {{ index.def
 $dictionary['{{ dictionaryKey }}']['duplicate_check']['{{ check.name }}'] = {{ check.def | raw }};
 
 {% endfor %}
+{% for acl in acls %}
+$dictionary['{{ dictionaryKey }}']['acls']['{{ acl.name }}'] = {{ acl.def | raw }};
+
+{% endfor %}
+
+{% for vis in visibility %}
+$dictionary['{{ dictionaryKey }}']['acls']['{{ vis.name }}'] = {{ vis.def | raw }};
+
+{% endfor %}

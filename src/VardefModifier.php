@@ -327,8 +327,14 @@ class VardefModifier
                 case 'duplicate_check':
                     $this->addDuplicateCheck($fields);
                     break;
+                case 'acls':
+                    $this->addAcls($fields);
+                    break;
+                case 'visibility':
+                    $this->addVisibility($fields);
+                    break;
                 default:
-                    throw new Exception\InvalidDefinitionFormat("$key is not supported, only fields, indices and relationships");
+                    throw new Exception\InvalidDefinitionFormat("$key is not supported, only fields, indices relationships, duplicate_check, acls");
             }
         }
 
@@ -804,6 +810,22 @@ class VardefModifier
     public function addDuplicateCheck(array $def)
     {
         $this->vardef['duplicate_check'] = $def;
+    }
+
+    /**
+     * @param array $def
+     */
+    public function addAcls(array $def)
+    {
+        $this->vardef['acls'] = $def;
+    }
+
+    /**
+     * @param array $def
+     */
+    public function addVisibility(array $def)
+    {
+        $this->vardef['visibility'] = $def;
     }
 
     /**
