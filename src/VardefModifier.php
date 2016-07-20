@@ -478,6 +478,8 @@ class VardefModifier
         $settings = self::merge($settings, array(
             'link' => array(
                 'relationship' => $relationship_name,
+                'name' => $name,
+                'module' => $module,
             ),
             'relationship' => array(
                 'lhs_module' => $this->module_name,
@@ -490,7 +492,7 @@ class VardefModifier
             ),
         ));
 
-        $this->addLink($module, $settings['link']);
+        $this->addLink($name, $settings['link']);
         $this->vardef['relationships'][$relationship_name] = $settings['relationship'];
 
         return $this;
