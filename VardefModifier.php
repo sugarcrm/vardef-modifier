@@ -212,7 +212,13 @@ class VardefModifier
         self::loadDefaults();
         $this->version = new VardefModifier_Version();
         $this->module_name = $module_name;
-        $this->object_name = self::getObjectName($this->module_name);
+
+        try {
+            $this->object_name = self::getObjectName($this->module_name);
+        } catch (VardefModifier_Exception $e) {
+            echo "$e\n";
+        }
+
         $this->dictionary = $dictionary;
 
         $dictionary_key = $this->getDictionaryKey();
