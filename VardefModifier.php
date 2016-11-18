@@ -615,6 +615,10 @@ class VardefModifier
             $_settings['name']['required'] = $settings['required'];
         }
 
+        if (isset($settings['readonly'])) {
+            $_settings['name']['readonly'] = $settings['readonly'];
+        }
+
         $_settings = static::merge($_settings, $settings);
 
         // Make sure that the id field name are synced
