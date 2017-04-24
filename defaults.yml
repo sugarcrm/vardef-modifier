@@ -71,11 +71,13 @@ address:
 flex_relate:
     id:
         type: id
+        reportable: false
     name:
         type: parent
         source: non-db
         options: parent_type_display
         parent_type: record_type_display
+        reportable: false
     type:
         dbType: varchar
         type: parent_type
@@ -90,8 +92,8 @@ flex_relate_link:
 ##############################################################
 # The Relationship base
 relationship:
-    id: {}
-    name: {}
+    id: { reportable: false }
+    name: { reportable: false }
     link:
         side: right
     index: { }
