@@ -1,12 +1,12 @@
 {
-    "name": "dri-nordic/vardef-modifier",
+    "name": "addoptify/vardef-modifier",
     "type": "library",
     "license": "MIT",
     "description": "",
     "authors": [
         {
             "name": "Emil Kilhage",
-            "email": "emil.kilhage@dri-nordic.com"
+            "email": "emilkilhage@gmail.com"
         }
     ],
     "require": {
@@ -14,16 +14,10 @@
         "symfony/filesystem": "~2.7",
         "symfony/yaml": "~2.7",
         "twig/twig": "~1.15",
-        "dri-nordic/sugarcrm-bootstrap": "~0.1"
+        "addoptify/sugarcrm-bootstrap": "~0.1"
     },
     "bin": [
         "bin/vardef-modifier"
-    ],
-    "repositories": [
-        {
-            "type": "composer",
-            "url":  "https://packages.dricrm.com/"
-        }
     ],
     "autoload": {
         "psr-4": {
