@@ -24,10 +24,5 @@
             "DRI\\SugarCRM\\VardefModifier\\": "src/",
             "DRI\\SugarCRM\\VardefModifier\\Tests\\": "tests/"
         }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.0-dev"
-        }
     }
 }
