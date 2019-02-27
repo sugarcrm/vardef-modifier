@@ -397,6 +397,15 @@ class VardefModifier
         $index = array_merge(array('name' => 'idx_'.implode('_', $index['fields'])), $index);
         $this->vardef['indices'][$index['name']] = $index;
 
+        if (strlen($index['name']) > 30) {
+            throw new \InvalidArgumentException(sprintf(
+                'Index name is too long: %s, %d - max length is 30 characters for module %s',
+                $index['name'],
+                strlen($index['name']),
+                $this->module_name
+            ));
+        }
+
         // Provides support in the import module to do a duplicate check on the unique fields.
         if ($index['type'] === 'unique') {
             $this->addIndex($fields, array(
@@ -1263,6 +1272,15 @@ class VardefModifier
      */
     private function addFieldToVardef($name, array $definition)
     {
+        if (strlen($name) > 30) {
+            throw new \InvalidArgumentException(sprintf(
+                'Field Name is too long: %s, %d - max length is 30 characters for module %s',
+                $name,
+                strlen($name),
+                $this->module_name)
+            );
+        }
+
         $this->vardef['fields'][$name] = array_merge(array(
             'name' => $name,
             'vname' => $this->getVName($name),
