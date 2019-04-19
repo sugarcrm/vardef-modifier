@@ -20,7 +20,7 @@ class YamlParser
             throw new Exception\InvalidFilePath($file);
         }
 
-        $def = Yaml::parse($file);
+        $def = Yaml::parse(file_get_contents($file));
 
         return $def;
     }
