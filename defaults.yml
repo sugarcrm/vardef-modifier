@@ -32,7 +32,7 @@ datetimecombo:
     options: date_range_search_dom
 url: { type: url, dbType: varchar }
 datetime: { type: datetime }
-bool: { type: bool }
+bool: { type: bool, default: '0' }
 float: { type: float, options: numeric_range_search_dom, enable_range_search: true }
 phone: { type: phone, dbType: varchar, len: 100 }
 id: { type: id }
