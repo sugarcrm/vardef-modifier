@@ -559,7 +559,7 @@ class VardefModifier
         $this->addField($id_name, 'id', $settings['id']);
         $this->addField($name_name, 'varchar', $settings['name']);
         $this->addField($type_name, 'varchar', $settings['type']);
-        $this->addIndex($id_name);
+        $this->addIndex($id_name, $settings['index']);
 
         return $this;
     }

@@ -82,6 +82,7 @@ flex_relate:
         dbType: varchar
         type: parent_type
         options: parent_type_display
+    index: {}
 flex_relate_link:
     prefix: parent
     link:
