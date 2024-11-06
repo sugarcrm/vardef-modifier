@@ -13,7 +13,7 @@
         "symfony/console": "~2.7",
         "symfony/filesystem": "~2.7",
         "symfony/yaml": "~2.7",
-        "twig/twig": "~1.15",
+        "twig/twig": "~1.15 || ~3.0",
         "addoptify/sugarcrm-bootstrap": "~0.1"
     },
     "bin": [
